@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أريج | متجر العطور الفاخرة</title>
+    <meta name="description" content="متجر أريج - تشكيلة حصرية من أفخم العطور الشرقية والفرنسية ودهن العود.">
+    <meta name="theme-color" content="#1c1917">
+
+    <!-- Open Graph (للمشاركة على مواقع التواصل) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="أريج | متجر العطور الفاخرة">
+    <meta property="og:description" content="تشكيلة حصرية من أفخم العطور الشرقية والفرنسية ودهن العود.">
+    <meta property="og:locale" content="ar_SA">
+
+    <!-- أيقونة الموقع -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧴%3C/text%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+    <!-- Google Fonts: Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col selection:bg-amber-200">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 glass-effect border-b border-stone-200/80 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="filterCategory('all')">
+                <div class="w-11 h-11 rounded-full bg-stone-900 flex items-center justify-center text-amber-400 font-bold text-2xl shadow-lg ring-2 ring-amber-500/20">
+                    أ
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-wider text-stone-900 block leading-none">أرِيـــج</span>
+                    <span class="text-xs text-amber-700 font-medium tracking-wide">عالم العطور الفاخرة</span>
+                </div>
+            </div>
+
+            <!-- Categories / Navigation -->
+            <nav class="hidden md:flex items-center space-x-8 space-x-reverse font-medium text-stone-600 text-sm lg:text-base">
+                <button onclick="filterCategory('all')" class="hover:text-amber-800 transition py-1 border-b-2 border-transparent hover:border-amber-600">الكل</button>
+                <button onclick="filterCategory('eastern')" class="hover:text-amber-800 transition py-1 border-b-2 border-transparent hover:border-amber-600">عطور شرقية</button>
+                <button onclick="filterCategory('western')" class="hover:text-amber-800 transition py-1 border-b-2 border-transparent hover:border-amber-600">عطور فرنسية</button>
+                <button onclick="filterCategory('oud')" class="hover:text-amber-800 transition py-1 border-b-2 border-transparent hover:border-amber-600">العود والدهن</button>
+                <button onclick="openQuiz()" class="text-amber-700 font-bold hover:text-amber-900 transition flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200/60 shadow-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> مستشار العطور
+                </button>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="relative hidden sm:block">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث عن عطرك المفضّل..." 
+                           class="w-48 lg:w-64 pl-9 pr-4 py-2 text-sm rounded-full bg-stone-100 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-sm"></i>
+                </div>
+                
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-amber-100 text-stone-800 transition shadow-sm">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-amber-800 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative bg-stone-900 text-white py-20 px-4 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10 gap-10">
+            <div class="max-w-xl text-center md:text-right">
+                <span class="bg-amber-500/20 text-amber-300 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest inline-block mb-4 border border-amber-500/30">مجموعة الشتاء الحصرية</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">عبقٌ يروي قصتك الفريدة</h1>
+                <p class="text-stone-300 text-base sm:text-lg mb-8 leading-relaxed">اكتشف تشكيلة حصريّة من أفخم العطور العالمية والشرقية المجهزة بأعلى معايير الجودة والتميز لثبات يدوم طويلاً.</p>
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                    <a href="#products" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3.5 rounded-full font-bold transition shadow-lg shadow-amber-600/30">تسوق الآن</a>
+                    <button onclick="openQuiz()" class="bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-500/40 px-6 py-3.5 rounded-full font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> اختر عطرك المناسب
+                    </button>
+                </div>
+            </div>
+            <div class="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
+                <div class="absolute w-full h-full rounded-full bg-amber-500/10 blur-3xl animate-pulse"></div>
+                <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" 
+                     alt="عطر فاخر" class="rounded-2xl shadow-2xl object-cover w-full h-full border-2 border-amber-500/30 rotate-2 transform hover:rotate-0 transition duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content & Products Section -->
+    <main id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow w-full">
+        <!-- Section Title & Filter Chips -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 border-b border-stone-200 pb-6">
+            <div>
+                <h2 class="text-3xl font-bold text-stone-900" id="sectionTitle">أحدث العطور</h2>
+                <p class="text-stone-500 text-sm mt-1">تصفح أفضل تركيبات العطور المتاحة لدينا</p>
+            </div>
+
+            <!-- Mobile & Desktop Filter Buttons -->
+            <div class="flex flex-wrap gap-2 text-sm">
+                <button onclick="filterCategory('all')" class="category-btn bg-stone-900 text-white px-4 py-2 rounded-full font-medium transition shadow-sm" data-cat="all">الكل</button>
+                <button onclick="filterCategory('eastern')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="eastern">شرقية</button>
+                <button onclick="filterCategory('western')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="western">فرنسية</button>
+                <button onclick="filterCategory('oud')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="oud">دهن العود</button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="mb-6 sm:hidden">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" oninput="handleMobileSearch()" placeholder="ابحث عن عطرك المفضّل..." 
+                       class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl bg-white border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-stone-400 text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Dynamic products will be inserted here -->
+        </div>
+
+        <!-- Empty Search Result -->
+        <div id="noResults" class="hidden text-center py-20 bg-stone-100/50 rounded-2xl border border-dashed border-stone-300 my-8">
+            <i class="fa-solid fa-bottle-droplet text-6xl text-stone-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-stone-700">لم يتم العثور على عطور تطابق بحثك</h3>
+            <p class="text-stone-500 mt-1 text-sm">جرب البحث بكلمات أخرى أو اختر فئة مختلفة</p>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="bg-stone-100 border-t border-stone-200 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="p-4 rounded-xl bg-white border border-stone-200/60 shadow-sm">
+                <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h3 class="font-bold text-stone-900">توصيل سريع وآمن</h3>
+                <p class="text-sm text-stone-500 mt-1">شحن لكافة المناطق خلال 2-4 أيام عمل</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-stone-200/60 shadow-sm">
+                <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h3 class="font-bold text-stone-900">عطور أصلية 100%</h3>
+                <p class="text-sm text-stone-500 mt-1">ضمن أعلى معايير الجودة والنقاء الثابت</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-stone-200/60 shadow-sm">
+                <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3 class="font-bold text-stone-900">دعم متواصل</h3>
+                <p class="text-sm text-stone-500 mt-1">فريقنا متواجد دائماً للإجابة على استفساراتكم</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-right">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white text-xl font-bold mb-3 flex items-center gap-2 justify-center md:justify-start">
+                        <span class="w-7 h-7 rounded-full bg-amber-600 text-white text-sm flex items-center justify-center">أ</span>
+                        متجر أريج
+                    </h3>
+                    <p class="text-sm leading-relaxed text-stone-400">وجهتك الأولى لاقتناء أرقى وأفخم العطور الشرقية والغربية المتميزة برائحتها الثابتة والجذابة.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3">روابط سريعة</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#products" onclick="filterCategory('all')" class="hover:text-amber-400 transition">جميع العطور</a></li>
+                        <li><a href="#products" onclick="filterCategory('eastern')" class="hover:text-amber-400 transition">العطور الشرقية</a></li>
+                        <li><a href="#products" onclick="filterCategory('western')" class="hover:text-amber-400 transition">العطور الفرنسية</a></li>
+                        <li><a href="#products" onclick="filterCategory('oud')" class="hover:text-amber-400 transition">دهن العود والمعتقات</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3">تواصل معنا</h4>
+                    <div class="flex justify-center md:justify-start space-x-4 space-x-reverse text-lg mb-3">
+                        <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-600 hover:text-white flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-600 hover:text-white flex items-center justify-center transition"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-600 hover:text-white flex items-center justify-center transition"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                    <p class="text-xs text-stone-500">البريد: support@arij-perfumes.com</p>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 pt-6 text-xs text-center text-stone-500">
+                جميع الحقوق محفوظة &copy; 2026 متجر أريج للعطور الفاخرة.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer Modal -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
+        <!-- Backdrop -->
+        <div id="cartBackdrop" onclick="toggleCart()" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+        
+        <!-- Panel -->
+        <div id="cartPanel" class="absolute left-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
+            <div class="p-6 bg-stone-900 text-white flex items-center justify-between border-b border-stone-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-amber-400"></i>
+                    <h3 class="font-bold text-lg">سلة التسوق</h3>
+                </div>
+                <button onclick="toggleCart()" class="text-stone-400 hover:text-white transition w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items list -->
+            <div id="cartItems" class="flex-grow overflow-y-auto p-6 space-y-4">
+                <!-- Dynamic Items -->
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="p-6 border-t border-stone-200 bg-stone-50">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-stone-600 font-medium">المجموع الكلي:</span>
+                    <span id="cartTotal" class="text-2xl font-bold text-stone-900">0 ر.س</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-center block">
+                    إتمام الطلب الآن
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+            <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition shadow-md">
+                <i class="fa-solid fa-xmark text-stone-700"></i>
+            </button>
+            <div id="modalContent" class="flex flex-col md:flex-row">
+                <!-- Injected modal content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Fragrance Quiz Modal -->
+    <div id="quizModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeQuiz()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div id="quizContent">
+                <div class="text-center mb-6">
+                    <span class="text-4xl inline-block mb-1">✨</span>
+                    <h3 class="text-2xl font-bold text-stone-900">مستشار العطور الذكي</h3>
+                    <p class="text-stone-500 text-sm mt-1">أجب عن السؤال لنساعدك في اختيار العطر المثالي لك</p>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="font-bold text-stone-800 text-sm sm:text-base">ما هي المكونات العطرية التي تفضلها عادةً؟</p>
+                    <button onclick="recommendPerfume('eastern')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-amber-500 hover:bg-amber-50/50 transition flex items-center justify-between group">
+                        <span class="font-medium text-stone-800">النفحات الشرقية (العود، العنبر، المسك)</span>
+                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-amber-600 transition"></i>
+                    </button>
+                    <button onclick="recommendPerfume('western')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-amber-500 hover:bg-amber-50/50 transition flex items-center justify-between group">
+                        <span class="font-medium text-stone-800">الروائح المنعشة والزهور (الفانيلا، الياسمين)</span>
+                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-amber-600 transition"></i>
+                    </button>
+                    <button onclick="recommendPerfume('oud')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-amber-500 hover:bg-amber-50/50 transition flex items-center justify-between group">
+                        <span class="font-medium text-stone-800">الروائح الخشبية والدهن الثقيل الفاخر</span>
+                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-amber-600 transition"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
