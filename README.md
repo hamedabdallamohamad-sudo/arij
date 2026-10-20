@@ -1,37 +1,39 @@
-# أريج | متجر العطور الفاخرة 🧴
+# زينة | Zayna — متجر إكسسوارات نسائية
 
-واجهة متجر عطور عربية (RTL) مبنية بـ HTML + Tailwind CSS + JavaScript خالص، بدون أي أدوات بناء.
+متجر عربي (RTL) بـ HTML + Tailwind + JavaScript، مربوط بـ **Firebase** (Firestore + Authentication).
 
-## المميزات
-- عرض المنتجات مع التصفية حسب الفئة والبحث
-- نافذة تفاصيل المنتج
-- سلة تسوق محفوظة في المتصفح (localStorage)
-- مستشار العطور لاختيار الفئة المناسبة
-- تصميم متجاوب مع الجوال
-
-## هيكل المشروع
+## الهيكل
 ```
 ├── index.html
 ├── css/style.css
-├── js/app.js              # منطق المتجر وبيانات المنتجات
+├── js/config.js            # إعدادات Firebase والواتساب والفئات (عدّلي هنا)
+├── js/firebase.js          # طبقة البيانات (Firestore + Auth)
+├── js/app.js               # واجهة المتجر والسلة ولوحة الإدارة
 ├── js/tailwind-config.js
-├── images/placeholder.svg # صورة بديلة عند فشل تحميل صورة
+├── images/placeholder.svg
+├── firestore.rules         # قواعد الأمان
 └── .nojekyll
 ```
 
+## إعداد Firebase (مرة واحدة)
+1. أنشئي مشروعاً في [Firebase Console](https://console.firebase.google.com) ثم أضيفي **Web app** وانسخي `firebaseConfig` إلى `js/config.js`.
+2. **Build ← Firestore Database ← Create database.**
+3. **Build ← Authentication ← Sign-in method ← Email/Password** (فعّليه)، ثم من تبويب **Users** أضيفي حساب المدير.
+4. من **Authentication ← Settings ← User actions** عطّلي **Enable create (sign-up)** حتى لا يُنشئ أحد حساباً جديداً.
+5. افتحي `firestore.rules`، غيّري `admin@example.com` إلى بريد المدير، ثم الصقيها في **Firestore ← Rules** واضغطي Publish.
+6. من **Authentication ← Settings ← Authorized domains** أضيفي `USERNAME.github.io`.
+7. في `js/config.js` ضعي رقم واتساب المتجر.
+
+## الاستخدام
+- **لوحة التحكم** (زر أعلى الصفحة): دخول بالبريد وكلمة المرور ← إضافة/تعديل/حذف المنتجات وعرض الطلبات.
+- أول مرة والمتجر فارغ: اضغطي «إضافة منتجات تجريبية» ثم عدّلي الصور.
+- عند «إتمام الطلب» يُحفظ الطلب في Firestore ثم يُفتح واتساب بالرسالة جاهزة.
+
 ## التشغيل محلياً
-افتح `index.html` في المتصفح مباشرة، أو:
+وحدات ES لا تعمل من `file://`، استخدمي:
 ```bash
 python3 -m http.server 8000
 ```
 
-## النشر على GitHub Pages
-1. أنشئ مستودعاً جديداً على GitHub وارفع الملفات.
-2. من **Settings ← Pages**.
-3. في **Source** اختر **Deploy from a branch**، ثم الفرع `main` والمجلد `/ (root)`.
-4. احفظ، وبعد دقيقة يظهر الرابط: `https://USERNAME.github.io/REPO-NAME/`
-
-## ملاحظات
-- زر "إتمام الطلب" تجريبي فقط ولا يرسل أي بيانات.
-- لتعديل المنتجات عدّل المصفوفة `perfumes` في `js/app.js`.
-- الصور مأخوذة من Unsplash، ويُفضّل استبدالها بصورك الخاصة (ضعها في `images/`).
+## النشر
+GitHub: **Settings ← Pages ← Deploy from a branch ← main / root**.

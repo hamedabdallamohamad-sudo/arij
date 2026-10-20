@@ -1,341 +1,321 @@
-// Database of Perfumes
-const perfumes = [
-    {
-        id: 1,
-        name: "سحر الشرق - العود الذهبي",
-        category: "eastern",
-        price: 350,
-        rating: 4.9,
-        image: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=600&q=80",
-        notes: "عود سيلاني، عنبر، صندل، لمسات من الورد الجوري",
-        description: "عطر شرقي ذو تركيز عالٍ يمنحك حضوراً هائباً ورائحة تدوم طوال اليوم. مصمم ليعبر عن الفخامة والروعة."
-    },
-    {
-        id: 2,
-        name: "لافي إن روز - باريس",
-        category: "western",
-        price: 280,
-        rating: 4.8,
-        image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80",
-        notes: "زهور الياسمين، الفانيلا، لمسات الفواكه الهادئة",
-        description: "عطر فرنسي ناعم ورقيق يعبر عن الأناقة والجاذبية الحديثة بلمسة باريسية مبهرة."
-    },
-    {
-        id: 3,
-        name: "دهن عود الملكي المعتق",
-        category: "oud",
-        price: 520,
-        rating: 5.0,
-        image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=600&q=80",
-        notes: "دهن عود معتق 15 سنة، خشب الصندل",
-        description: "الخيار الأفضل للمناسبات الفاخرة، ثبات عالي جداً وجاذبية استثنائية تأثر الألباب."
-    },
-    {
-        id: 4,
-        name: "أمبير نايت - الملكي",
-        category: "eastern",
-        price: 410,
-        rating: 4.7,
-        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=600&q=80",
-        notes: "عنبر دافئ، مسك أبيض، أخشاب الأرز",
-        description: "مزيج ساحر يجمع بين دفء العنبر ونقاء المسك لتجربة عطريّة أسطورية."
-    },
-    {
-        id: 5,
-        name: "أوركيد الفانيلا الفاخر",
-        category: "western",
-        price: 290,
-        rating: 4.6,
-        image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=600&q=80",
-        notes: "فانيلا مدغشقر، زهرة الأوركيد، البرغموت",
-        description: "عطر منعش يناسب جميع الأوقات والاستخدام اليومي بعطرية هادئة وجذابة."
-    },
-    {
-        id: 6,
-        name: "مسك ختام المعتق",
-        category: "oud",
-        price: 380,
-        rating: 4.9,
-        image: "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=600&q=80",
-        notes: "مسك نقي، لمحات خشبية، نوتات البودر",
-        description: "عبق مميز ورائع يعطي إحساساً رائعاً بالنظافة والانتعاش الفائق مع ثبات يدوم طويلاً."
-    }
-];
+// واجهة متجر زينة — المنتجات والطلبات من Firebase
+import { WHATSAPP_NUMBER, CATEGORIES, CURRENCY } from './config.js';
+import * as db from './firebase.js';
 
-const CART_KEY = 'arij_cart_v1';
-let currentCategory = 'all';
-let cart = loadCart();
+/* ---------- أدوات ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const img = u => {
+    u = String(u ?? '').trim();
+    if (/^https?:\/\//i.test(u)) return esc(u);                                    // رابط كامل
+    if (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(u)) return u;   // صورة مرفوعة من الجهاز
+    if (/^[\w\-.]+\.(jpe?g|png|webp|gif|svg)$/i.test(u)) return 'images/' + esc(u); // اسم ملف فقط
+    if (/^images\/[\w\-./]+$/i.test(u) && !u.includes('..')) return esc(u);       // images/اسم.jpg
+    return 'images/placeholder.svg';
+};
+const money = n => `${Number(n || 0).toLocaleString('en-US')} ${CURRENCY}`;
+const ONERR = "this.onerror=null;this.src='images/placeholder.svg'";
+const show = id => $(id).classList.remove('hidden');
+const hide = id => $(id).classList.add('hidden');
 
-function loadCart() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(CART_KEY));
-        return Array.isArray(saved) ? saved : [];
-    } catch (e) {
-        return [];
-    }
+function toast(msg, error = false) {
+    const t = document.createElement('div');
+    t.className = `fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-full text-sm font-bold shadow-xl transition-opacity duration-300 opacity-0 ${error ? 'bg-red-700 text-white' : 'bg-stone-900 text-amber-300'}`;
+    t.textContent = msg;
+    document.body.append(t);
+    requestAnimationFrame(() => t.classList.remove('opacity-0'));
+    setTimeout(() => { t.classList.add('opacity-0'); setTimeout(() => t.remove(), 300); }, 2800);
 }
 
-function saveCart() {
-    try {
-        localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    } catch (e) { /* التخزين غير متاح - نتجاهل */ }
+/* ---------- الحالة ---------- */
+const CART_KEY = 'zayna_cart_v2';
+const loadCart = () => { try { const c = JSON.parse(localStorage.getItem(CART_KEY)); return Array.isArray(c) ? c : []; } catch { return []; } };
+const state = { products: [], loaded: false, category: 'all', query: '', cart: loadCart(), isAdmin: false, orders: [], stopOrders: null };
+const saveCart = () => { try { localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); } catch {} };
+
+/* ---------- المتجر ---------- */
+const card = p => `
+<div class="bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+  <div class="relative overflow-hidden aspect-square cursor-pointer" onclick="openProductModal('${esc(p.id)}')">
+    <img src="${img(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="${ONERR}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+    ${p.rating ? `<span class="absolute top-3 right-3 bg-stone-900/80 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-full">★ ${esc(p.rating)}</span>` : ''}
+  </div>
+  <div class="p-5 flex flex-col flex-grow justify-between">
+    <div>
+      <h3 class="font-bold text-stone-900 text-lg mb-1 hover:text-rose-700 transition cursor-pointer" onclick="openProductModal('${esc(p.id)}')">${esc(p.name)}</h3>
+      <p class="text-xs text-stone-500 mb-3 line-clamp-1"><i class="fa-solid fa-gem text-rose-600 ml-1"></i>${esc(p.notes)}</p>
+    </div>
+    <div class="flex items-center justify-between pt-3 border-t border-stone-100">
+      <span class="text-xl font-bold text-stone-900">${esc(p.price)} <span class="text-xs text-stone-500 font-normal">${CURRENCY}</span></span>
+      <button onclick="addToCart('${esc(p.id)}')" class="bg-stone-900 hover:bg-rose-700 text-white px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 text-sm font-medium shadow-md"><i class="fa-solid fa-plus"></i> إضافة</button>
+    </div>
+  </div>
+</div>`;
+
+function renderStore() {
+    const q = state.query.trim().toLowerCase();
+    const list = state.products.filter(p =>
+        (state.category === 'all' || p.category === state.category) &&
+        (!q || `${p.name} ${p.notes}`.toLowerCase().includes(q)));
+    $('noResults').classList.toggle('hidden', !state.loaded || list.length > 0);
+    $('productsGrid').innerHTML = state.loaded
+        ? list.map(card).join('')
+        : '<p class="col-span-full text-center text-stone-400 py-16">جارٍ تحميل المنتجات...</p>';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderProducts(perfumes);
-    updateCartUI();
-});
-
-// إغلاق النوافذ بزر Escape
-document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    closeProductModal();
-    closeQuiz();
-    if (!document.getElementById('cartDrawer').classList.contains('invisible')) toggleCart(false);
-});
-
-// Render Product Cards
-function renderProducts(items) {
-    const container = document.getElementById('productsGrid');
-    const noResults = document.getElementById('noResults');
-
-    if (items.length === 0) {
-        container.innerHTML = '';
-        noResults.classList.remove('hidden');
-        return;
-    }
-
-    noResults.classList.add('hidden');
-    container.innerHTML = items.map(perfume => `
-        <div class="bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-            <div class="relative overflow-hidden aspect-square cursor-pointer" onclick="openProductModal(${perfume.id})">
-                <img src="${perfume.image}" alt="${perfume.name}" loading="lazy" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                <span class="absolute top-3 right-3 bg-stone-900/80 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
-                    ★ ${perfume.rating}
-                </span>
-            </div>
-            <div class="p-5 flex flex-col flex-grow justify-between">
-                <div>
-                    <h3 class="font-bold text-stone-900 text-lg mb-1 hover:text-amber-700 transition cursor-pointer" onclick="openProductModal(${perfume.id})">${perfume.name}</h3>
-                    <p class="text-xs text-stone-500 mb-3 line-clamp-1"><i class="fa-solid fa-wind text-amber-600 ml-1"></i>${perfume.notes}</p>
-                </div>
-                <div class="flex items-center justify-between pt-3 border-t border-stone-100">
-                    <span class="text-xl font-bold text-stone-900">${perfume.price} <span class="text-xs text-stone-500 font-normal">ر.س</span></span>
-                    <button onclick="addToCart(${perfume.id})" class="bg-stone-900 hover:bg-amber-800 text-white px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 text-xs sm:text-sm font-medium shadow-md">
-                        <i class="fa-solid fa-plus"></i> إضافة
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function filterCategory(category) {
-    currentCategory = category;
-    
-    // Update active state in UI
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        if (btn.dataset.cat === category) {
-            btn.classList.remove('bg-stone-200', 'text-stone-700');
-            btn.classList.add('bg-stone-900', 'text-white');
-        } else {
-            btn.classList.remove('bg-stone-900', 'text-white');
-            btn.classList.add('bg-stone-200', 'text-stone-700');
-        }
+function filterCategory(cat) {
+    state.category = cat;
+    document.querySelectorAll('.category-btn').forEach(b => {
+        const on = b.dataset.cat === cat;
+        b.classList.toggle('bg-stone-900', on); b.classList.toggle('text-white', on);
+        b.classList.toggle('bg-stone-200', !on); b.classList.toggle('text-stone-700', !on);
     });
-
-    const query = (document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value || '').toLowerCase();
-    filterAndRender(query);
+    renderStore();
 }
+function handleSearch() { state.query = $('searchInput').value; renderStore(); }
 
-function handleSearch() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    filterAndRender(query);
-}
-
-function handleMobileSearch() {
-    const query = document.getElementById('mobileSearchInput').value.toLowerCase();
-    filterAndRender(query);
-}
-
-function filterAndRender(query) {
-    const filtered = perfumes.filter(p => 
-        (currentCategory === 'all' || p.category === currentCategory) &&
-        (p.name.toLowerCase().includes(query) || p.notes.toLowerCase().includes(query))
-    );
-    renderProducts(filtered);
-}
-
-function addToCart(productId) {
-    const product = perfumes.find(p => p.id === productId);
-    const cartItem = cart.find(item => item.id === productId);
-
-    if (cartItem) {
-        cartItem.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-
-    updateCartUI();
-    toggleCart(true); // Open cart drawer
-}
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    updateCartUI();
-}
-
-function changeQuantity(productId, delta) {
-    const item = cart.find(i => i.id === productId);
-    if (item) {
-        item.quantity += delta;
-        if (item.quantity <= 0) {
-            removeFromCart(productId);
-        } else {
-            updateCartUI();
-        }
-    }
-}
-
-function updateCartUI() {
-    const cartItemsContainer = document.getElementById('cartItems');
-    const cartCount = document.getElementById('cartCount');
-    const cartTotal = document.getElementById('cartTotal');
-
-    saveCart();
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    cartCount.innerText = totalItems;
-    cartTotal.innerText = `${totalPrice} ر.س`;
-
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = `
-            <div class="text-center py-16 text-stone-400">
-                <i class="fa-solid fa-basket-shopping text-5xl mb-3"></i>
-                <p class="font-medium text-stone-500">السلة فارغة حالياً</p>
-                <p class="text-xs text-stone-400 mt-1">تصفح العطور وأضفها للسلة</p>
-            </div>
-        `;
-        return;
-    }
-
-    cartItemsContainer.innerHTML = cart.map(item => `
-        <div class="flex items-center gap-4 bg-stone-50 p-3 rounded-xl border border-stone-200">
-            <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" class="w-16 h-16 rounded-lg object-cover">
-            <div class="flex-grow">
-                <h4 class="font-bold text-stone-900 text-sm">${item.name}</h4>
-                <span class="text-amber-800 font-bold text-sm">${item.price} ر.س</span>
-                <div class="flex items-center gap-2 mt-2">
-                    <button onclick="changeQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-xs font-bold transition">-</button>
-                    <span class="text-xs font-bold px-1">${item.quantity}</span>
-                    <button onclick="changeQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-xs font-bold transition">+</button>
-                </div>
-            </div>
-            <button onclick="removeFromCart(${item.id})" class="text-stone-400 hover:text-red-500 p-2 transition">
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
+function openProductModal(id) {
+    const p = state.products.find(x => x.id === id); if (!p) return;
+    $('modalContent').innerHTML = `
+    <div class="w-full md:w-1/2 h-64 md:h-auto"><img src="${img(p.image)}" alt="${esc(p.name)}" onerror="${ONERR}" class="w-full h-full object-cover"></div>
+    <div class="w-full md:w-1/2 p-6 flex flex-col justify-between">
+      <div>
+        <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200/60 inline-block mb-2">${esc(CATEGORIES[p.category] || 'إكسسوار')}</span>
+        <h3 class="text-2xl font-bold text-stone-900">${esc(p.name)}</h3>
+        <p class="text-rose-800 font-bold text-2xl mt-2">${esc(p.price)} <span class="text-sm text-stone-500 font-normal">${CURRENCY}</span></p>
+        <p class="text-stone-600 text-sm mt-4 leading-relaxed">${esc(p.description)}</p>
+        <div class="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-100">
+          <span class="text-xs font-bold text-stone-700 block mb-1">الخامة والمواد:</span>
+          <span class="text-xs text-stone-500">${esc(p.notes)}</span>
         </div>
-    `).join('');
+      </div>
+      <button onclick="addToCart('${esc(p.id)}'); closeProductModal();" class="mt-6 w-full bg-stone-900 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg">إضافة إلى الحقيبة</button>
+    </div>`;
+    show('productModal');
+}
+const closeProductModal = () => hide('productModal');
+const openQuiz = () => show('quizModal');
+const closeQuiz = () => hide('quizModal');
+function recommendProduct(cat) { closeQuiz(); switchView('store'); filterCategory(cat); $('products').scrollIntoView({ behavior: 'smooth' }); }
+
+/* ---------- السلة ---------- */
+const cartItems = () => state.cart.map(c => { const p = state.products.find(x => x.id === c.id); return p && { ...p, qty: c.qty }; }).filter(Boolean);
+
+function addToCart(id) {
+    const c = state.cart.find(x => x.id === id);
+    c ? c.qty++ : state.cart.push({ id, qty: 1 });
+    renderCart(); toggleCart(true);
+}
+function changeQuantity(id, d) {
+    const c = state.cart.find(x => x.id === id); if (!c) return;
+    c.qty += d;
+    if (c.qty <= 0) state.cart = state.cart.filter(x => x.id !== id);
+    renderCart();
+}
+function removeFromCart(id) { state.cart = state.cart.filter(x => x.id !== id); renderCart(); }
+
+function renderCart() {
+    saveCart();
+    const items = cartItems();
+    $('cartCount').textContent = items.reduce((s, i) => s + i.qty, 0);
+    $('cartTotal').textContent = money(items.reduce((s, i) => s + i.price * i.qty, 0));
+    $('cartItems').innerHTML = items.length ? items.map(i => `
+    <div class="flex items-center gap-4 bg-stone-50 p-3 rounded-xl border border-stone-200">
+      <img src="${img(i.image)}" alt="${esc(i.name)}" onerror="${ONERR}" class="w-16 h-16 rounded-lg object-cover">
+      <div class="flex-grow">
+        <h4 class="font-bold text-stone-900 text-sm">${esc(i.name)}</h4>
+        <span class="text-rose-800 font-bold text-sm">${money(i.price)}</span>
+        <div class="flex items-center gap-2 mt-2">
+          <button onclick="changeQuantity('${esc(i.id)}',-1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 text-xs font-bold">-</button>
+          <span class="text-xs font-bold px-1">${i.qty}</span>
+          <button onclick="changeQuantity('${esc(i.id)}',1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 text-xs font-bold">+</button>
+        </div>
+      </div>
+      <button onclick="removeFromCart('${esc(i.id)}')" class="text-stone-400 hover:text-red-500 p-2 transition"><i class="fa-solid fa-trash-can"></i></button>
+    </div>`).join('') : `
+    <div class="text-center py-16 text-stone-400"><i class="fa-solid fa-bag-shopping text-5xl mb-3"></i>
+    <p class="font-medium text-stone-500">الحقيبة فارغة حالياً</p><p class="text-xs mt-1">تصفحي القطع وأضيفيها للحقيبة</p></div>`;
 }
 
 function toggleCart(open = null) {
-    const drawer = document.getElementById('cartDrawer');
-    const backdrop = document.getElementById('cartBackdrop');
-    const panel = document.getElementById('cartPanel');
-
-    const isOpening = open !== null ? open : drawer.classList.contains('invisible');
-
-    if (isOpening) {
+    const drawer = $('cartDrawer');
+    const opening = open ?? drawer.classList.contains('invisible');
+    if (opening) {
         drawer.classList.remove('invisible');
-        setTimeout(() => {
-            backdrop.classList.remove('opacity-0');
-            panel.classList.remove('-translate-x-full');
-        }, 10);
+        setTimeout(() => { $('cartBackdrop').classList.remove('opacity-0'); $('cartPanel').classList.remove('-translate-x-full'); }, 10);
     } else {
-        backdrop.classList.add('opacity-0');
-        panel.classList.add('-translate-x-full');
-        setTimeout(() => {
-            drawer.classList.add('invisible');
-        }, 300);
+        $('cartBackdrop').classList.add('opacity-0'); $('cartPanel').classList.add('-translate-x-full');
+        setTimeout(() => drawer.classList.add('invisible'), 300);
     }
 }
 
-function openProductModal(productId) {
-    const product = perfumes.find(p => p.id === productId);
-    const content = document.getElementById('modalContent');
-
-    content.innerHTML = `
-        <div class="w-full md:w-1/2 h-64 md:h-auto relative">
-            <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" class="w-full h-full object-cover">
-        </div>
-        <div class="w-full md:w-1/2 p-6 flex flex-col justify-between">
-            <div>
-                <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full uppercase border border-amber-200/60 inline-block mb-2">عطر فاخر</span>
-                <h3 class="text-2xl font-bold text-stone-900">${product.name}</h3>
-                <p class="text-amber-800 font-bold text-2xl mt-2">${product.price} <span class="text-sm text-stone-500 font-normal">ر.س</span></p>
-                <p class="text-stone-600 text-sm mt-4 leading-relaxed">${product.description}</p>
-                <div class="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-100">
-                    <span class="text-xs font-bold text-stone-700 block mb-1">النوتات العطرية الأساسية:</span>
-                    <span class="text-xs text-stone-500 leading-normal">${product.notes}</span>
-                </div>
-            </div>
-            <div class="mt-6">
-                <button onclick="addToCart(${product.id}); closeProductModal();" class="w-full bg-stone-900 hover:bg-amber-800 text-white font-bold py-3.5 rounded-xl transition shadow-lg">
-                    إضافة إلى السلة
-                </button>
-            </div>
-        </div>
-    `;
-
-    document.getElementById('productModal').classList.remove('hidden');
+function checkoutViaWhatsApp() {
+    const items = cartItems();
+    if (!items.length) return toast('الحقيبة فارغة! أضيفي قطعاً أولاً.', true);
+    const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const orderNo = 'Z-' + Date.now().toString(36).toUpperCase();
+    const lines = items.map(i => `• ${i.name} ×${i.qty} = ${money(i.price * i.qty)}`);
+    const text = `مرحباً زينة 👋\nأرغب بإتمام الطلب رقم ${orderNo}:\n${lines.join('\n')}\n\nالمجموع: ${money(total)}`;
+    // حفظ الطلب في Firestore (لا نمنع واتساب إن فشل الحفظ)
+    db.createOrder({ orderNo, total, items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })) })
+        .catch(e => console.warn('تعذّر حفظ الطلب:', e));
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+    state.cart = []; renderCart(); toggleCart(false);
 }
 
-function closeProductModal() {
-    document.getElementById('productModal').classList.add('hidden');
+/* ---------- الإدارة ---------- */
+function switchView(v) {
+    if (v === 'admin' && !state.isAdmin) return openAdminModal();
+    $('storeView').classList.toggle('hidden', v === 'admin');
+    $('adminView').classList.toggle('hidden', v !== 'admin');
+    window.scrollTo(0, 0);
+}
+function openAdminModal() { state.isAdmin ? switchView('admin') : show('adminAuthModal'); }
+const closeAdminAuthModal = () => hide('adminAuthModal');
+
+async function adminLogin() {
+    const email = $('adminEmailInput').value.trim(), pass = $('adminPasswordInput').value;
+    if (!email || !pass) return toast('أدخلي البريد وكلمة المرور', true);
+    try {
+        await db.login(email, pass);
+        $('adminPasswordInput').value = '';
+        closeAdminAuthModal(); state.isAdmin = true; switchView('admin');
+    } catch { toast('بيانات الدخول غير صحيحة', true); }
+}
+async function adminLogout() { await db.logout(); switchView('store'); }
+
+function switchAdminTab(tab) {
+    const prod = tab === 'products';
+    $('adminProductsTab').classList.toggle('hidden', !prod);
+    $('adminOrdersTab').classList.toggle('hidden', prod);
+    [['tabBtnProducts', prod], ['tabBtnOrders', !prod]].forEach(([id, on]) => {
+        const b = $(id);
+        b.classList.toggle('border-rose-600', on); b.classList.toggle('text-rose-800', on);
+        b.classList.toggle('border-transparent', !on); b.classList.toggle('text-stone-500', !on);
+    });
 }
 
-function openQuiz() {
-    document.getElementById('quizModal').classList.remove('hidden');
+function renderAdmin() {
+    $('statTotalProducts').textContent = state.products.length;
+    $('statTotalOrders').textContent = state.orders.length;
+    $('statTotalSales').textContent = money(state.orders.reduce((s, o) => s + (o.total || 0), 0));
+    $('adminProductsTable').innerHTML = state.products.length ? state.products.map(p => `
+    <tr><td class="p-4 font-bold text-stone-900">${esc(p.name)}</td>
+    <td class="p-4">${esc(CATEGORIES[p.category] || p.category)}</td>
+    <td class="p-4">${money(p.price)}</td><td class="p-4">${p.rating ? '★ ' + esc(p.rating) : '—'}</td>
+    <td class="p-4 text-center whitespace-nowrap">
+      <button onclick="editProduct('${esc(p.id)}')" class="text-blue-600 hover:text-blue-800 px-2" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+      <button onclick="deleteProduct('${esc(p.id)}')" class="text-red-500 hover:text-red-700 px-2" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
+    </td></tr>`).join('') : `<tr><td colspan="5" class="p-8 text-center text-stone-500">لا توجد منتجات بعد.
+      <button onclick="seedDemo()" class="text-rose-700 font-bold underline">إضافة منتجات تجريبية</button></td></tr>`;
+    $('adminOrdersTable').innerHTML = state.orders.length ? state.orders.map(o => `
+    <tr><td class="p-4 font-bold">${esc(o.orderNo)}</td>
+    <td class="p-4">${(o.items || []).map(i => `${esc(i.name)} ×${esc(i.qty)}`).join('، ')}</td>
+    <td class="p-4 font-bold">${money(o.total)}</td>
+    <td class="p-4 text-stone-500">${o.createdAt ? o.createdAt.toDate().toLocaleString('ar') : '—'}</td></tr>`).join('')
+        : '<tr><td colspan="4" class="p-8 text-center text-stone-500">لا توجد طلبات بعد.</td></tr>';
 }
 
-function closeQuiz() {
-    document.getElementById('quizModal').classList.add('hidden');
+// تصغير الصورة في المتصفح قبل حفظها (حتى 800px) لتبقى خفيفة
+function compressImage(file, max = 800, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const im = new Image();
+        im.onload = () => {
+            const r = Math.min(1, max / Math.max(im.width, im.height));
+            const c = document.createElement('canvas');
+            c.width = Math.round(im.width * r); c.height = Math.round(im.height * r);
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(im, 0, 0, c.width, c.height);
+            URL.revokeObjectURL(url);
+            let q = quality, out = c.toDataURL('image/jpeg', q);
+            while (out.length > 600000 && q > 0.4) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
+            out.length > 900000 ? reject(new Error('big')) : resolve(out);
+        };
+        im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad')); };
+        im.src = url;
+    });
+}
+async function handleImageFile(input) {
+    const f = input.files[0]; if (!f) return;
+    try {
+        const data = await compressImage(f);
+        $('formImage').value = data; $('formImagePreview').src = data;
+    } catch { toast('تعذّرت معالجة الصورة، جرّبي صورة JPG أو PNG أخرى', true); input.value = ''; }
 }
 
-function recommendPerfume(cat) {
-    closeQuiz();
-    filterCategory(cat);
-    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-}
-
-function checkout() {
-    if(cart.length === 0) {
-        // Show floating warning notification instead of alert()
-        const toast = document.createElement('div');
-        toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-amber-300 px-6 py-3 rounded-full text-sm font-bold shadow-xl border border-amber-500/30 transition-all duration-300 opacity-0';
-        toast.innerText = 'السلة فارغة! قم بإضافة عطور أولاً.';
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.remove('opacity-0'), 10);
-        setTimeout(() => {
-            toast.classList.add('opacity-0');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
-        return;
+function openProductFormModal(p = null) {
+    $('productForm').reset();
+    $('editProductId').value = p?.id || '';
+    $('formModalTitle').textContent = p ? 'تعديل القطعة' : 'إضافة قطعة جديدة';
+    $('formImage').value = p?.image || '';   // الحقل مخفي فلا يمسحه reset()
+    $('formImagePreview').src = p ? img(p.image) : 'images/placeholder.svg';
+    if (p) {
+        $('formName').value = p.name; $('formCategory').value = p.category; $('formPrice').value = p.price;
+        $('formNotes').value = p.notes; $('formDescription').value = p.description;
     }
-
-    // Successful checkout notification
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-amber-800 text-white px-6 py-3 rounded-full text-sm font-bold shadow-xl transition-all duration-300 opacity-0';
-    toast.innerText = 'شكراً لك! تم استلام طلبك بنجاح ✨';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.remove('opacity-0'), 10);
-    setTimeout(() => {
-        toast.classList.add('opacity-0');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-
-    cart = [];
-    updateCartUI();
-    toggleCart(false);
+    show('productFormModal');
 }
+const closeProductFormModal = () => hide('productFormModal');
+const editProduct = id => openProductFormModal(state.products.find(p => p.id === id));
+
+async function handleSaveProduct(e) {
+    e.preventDefault();
+    const data = {
+        name: $('formName').value.trim(), category: $('formCategory').value, price: Number($('formPrice').value),
+        image: $('formImage').value.trim(), notes: $('formNotes').value.trim(), description: $('formDescription').value.trim()
+    };
+    if (!data.image) return toast('اختاري صورة للقطعة', true);
+    try {
+        await db.saveProduct($('editProductId').value || null, data);
+        closeProductFormModal(); toast('تم حفظ القطعة ✨');
+    } catch { toast('تعذّر الحفظ — تأكدي من تسجيل الدخول وقواعد Firestore', true); }
+}
+async function deleteProduct(id) {
+    if (!confirm('هل تريدين حذف هذه القطعة نهائياً؟')) return;
+    try { await db.removeProduct(id); toast('تم الحذف'); } catch { toast('تعذّر الحذف', true); }
+}
+async function seedDemo() {
+    const mk = (name, category, price, notes, description) => ({ name, category, price, image: '', notes, description });
+    try {
+        await db.seedProducts([
+            mk('سلسلة لؤلؤ كلاسيكية', 'jewelry', 120, 'مطلية بالذهب 18، لؤلؤ طبيعي', 'سلسلة أنيقة تناسب الإطلالات اليومية والمناسبات.'),
+            mk('قلادة القلب الذهبي', 'jewelry', 95, 'ستانلس ستيل مطلي بالذهب', 'قلادة رقيقة بتصميم قلب ناعم.'),
+            mk('أقراط زركون لامعة', 'rings', 80, 'فضة عيار 925، زركون', 'أقراط براقة تمنحك إطلالة مميزة.'),
+            mk('خاتم الورد الفضي', 'rings', 70, 'فضة عيار 925', 'خاتم بتصميم وردة قابل للتعديل.'),
+            mk('ساعة روز جولد', 'watches', 260, 'ستانلس ستيل، زجاج معدني', 'ساعة نسائية فاخرة بسوار ناعم.'),
+            mk('ساعة كلاسيك بسوار جلد', 'watches', 220, 'جلد طبيعي، مينا بيضاء', 'ساعة كلاسيكية أنيقة لكل المناسبات.')
+        ]);
+        toast('تمت إضافة منتجات تجريبية — عدّلي صورها من لوحة التحكم');
+    } catch { toast('تعذّرت الإضافة', true); }
+}
+
+/* ---------- التشغيل ---------- */
+document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    ['productModal', 'quizModal', 'adminAuthModal', 'productFormModal'].forEach(hide);
+    if (!$('cartDrawer').classList.contains('invisible')) toggleCart(false);
+});
+
+db.watchProducts(list => {
+    state.products = list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    state.loaded = true; renderStore(); renderCart(); renderAdmin();
+}, () => { state.loaded = true; renderStore(); toast('تعذّر تحميل المنتجات — راجعي إعدادات Firebase', true); });
+
+db.onAuth(user => {
+    state.isAdmin = !!user;
+    state.stopOrders?.(); state.stopOrders = null;
+    if (user) state.stopOrders = db.watchOrders(o => { state.orders = o; renderAdmin(); }, () => toast('لا صلاحية لقراءة الطلبات', true));
+    else { state.orders = []; renderAdmin(); }
+});
+
+const wa = $('whatsappFooterLink');
+if (wa) wa.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+filterCategory('all'); renderCart();
+
+// index.html يستدعي الدوال عبر onclick، فنعرضها عالمياً
+Object.assign(window, { switchView, filterCategory, handleSearch, openProductModal, closeProductModal, openQuiz, closeQuiz,
+    recommendProduct, addToCart, changeQuantity, removeFromCart, toggleCart, checkoutViaWhatsApp, openAdminModal,
+    closeAdminAuthModal, adminLogin, adminLogout, switchAdminTab, openProductFormModal, closeProductFormModal,
+    editProduct, handleSaveProduct, deleteProduct, seedDemo, handleImageFile });

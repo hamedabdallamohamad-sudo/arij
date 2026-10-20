@@ -3,842 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zayna | زينة - متجر الإكسسوارات النسائية الفاخرة</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Tajawal -->
+
+    <!-- SEO -->
+    <title>زينة Zayna | إكسسوارات نسائية أنيقة</title>
+    <meta name="description" content="متجر زينة - إكسسوارات نسائية أنيقة: سلاسل، أقراط، خواتم، ساعات. تصاميم راقية بأسعار مناسبة، وتوصيل سريع.">
+    <meta name="keywords" content="إكسسوارات نسائية, مجوهرات, خواتم, أقراط, سلاسل, ساعات نسائية, زينة, Zayna">
+    <meta name="author" content="Zayna Store">
+    <meta property="og:title" content="زينة Zayna | إكسسوارات نسائية أنيقة">
+    <meta property="og:description" content="تفاصيل صغيرة تُكمل إطلالتك. تسوقي أجمل الإكسسوارات النسائية.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#1F2A44">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Tajawal', 'sans-serif'],
-                    },
-                    colors: {
-                        rose: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            600: '#e11d48',
-                            700: '#be123c',
-                            800: '#9f1239',
-                            900: '#881337',
-                        },
-                        gold: '#D4AF37',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Tajawal', sans-serif; }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(12px);
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 10px;
-        }
-    </style>
+
+    <!-- Tailwind (الإعدادات في js/tailwind-config.js) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col selection:bg-rose-100">
 
-    <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 glass-effect border-b border-stone-200/80 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchView('store'); filterCategory('all');">
-                <div class="w-11 h-11 rounded-full bg-stone-900 flex items-center justify-center text-amber-400 font-bold text-2xl shadow-lg ring-2 ring-amber-500/20">
-                    Z
-                </div>
-                <div>
-                    <span class="text-2xl font-extrabold tracking-wider text-stone-900 block leading-none">Zayna | زينة</span>
-                    <span class="text-xs text-rose-700 font-medium tracking-wide">عالم الأناقة والإكسسوارات</span>
-                </div>
-            </div>
-
-            <!-- Categories / Navigation -->
-            <nav id="storeNav" class="hidden md:flex items-center space-x-8 space-x-reverse font-medium text-stone-600 text-sm lg:text-base">
-                <button onclick="switchView('store'); filterCategory('all')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">الكل</button>
-                <button onclick="switchView('store'); filterCategory('jewelry')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">مجوهرات وسلاسل</button>
-                <button onclick="switchView('store'); filterCategory('rings')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">أقراط وخواتم</button>
-                <button onclick="switchView('store'); filterCategory('watches')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">ساعات فاخرة</button>
-                <button onclick="openQuiz()" class="text-rose-700 font-bold hover:text-rose-900 transition flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200/60 shadow-sm">
-                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> مستشار الأناقة
-                </button>
-            </nav>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-3 sm:gap-4">
-                <button onclick="openAdminModal()" class="text-stone-600 hover:text-rose-800 text-sm font-bold bg-stone-100 hover:bg-rose-50 px-3 py-2 rounded-xl transition flex items-center gap-2 border border-stone-200">
-                    <i class="fa-solid fa-user-gear text-rose-700"></i>
-                    <span class="hidden sm:inline" id="adminBtnText">لوحة التحكم</span>
-                </button>
-                
-                <div id="searchBoxNav" class="relative hidden sm:block">
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحثي عن قطعتك المفضلة..." 
-                           class="w-48 lg:w-64 pl-9 pr-4 py-2 text-sm rounded-full bg-stone-100 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-sm"></i>
-                </div>
-                
-                <button id="cartBtnNav" onclick="toggleCart()" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-rose-100 text-stone-800 transition shadow-sm">
-                    <i class="fa-solid fa-bag-shopping text-lg"></i>
-                    <span id="cartCount" class="absolute -top-1 -right-1 bg-rose-700 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- STORE VIEW -->
-    <div id="storeView" class="flex flex-col min-h-screen">
-        <!-- Hero Banner -->
-        <section class="relative bg-stone-900 text-white py-20 px-4 overflow-hidden">
-            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:20px_20px]"></div>
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10 gap-10">
-                <div class="max-w-xl text-center md:text-right">
-                    <span class="bg-rose-500/20 text-rose-300 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest inline-block mb-4 border border-rose-500/30">مجموعة زينة الحصرية</span>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">بريقٌ يكمّل إطلالتكِ الساحرة</h1>
-                    <p class="text-stone-300 text-base sm:text-lg mb-8 leading-relaxed">اكتشفي تشكيلة مميزة من أحدث الإكسسوارات والمجوهرات المطلية والمصممة بعناية فائقة لتضفي لمسة لملاقاً لكل مناسبة.</p>
-                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                        <a href="#products" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3.5 rounded-full font-bold transition shadow-lg shadow-rose-600/30">تسوقي الآن</a>
-                        <button onclick="openQuiz()" class="bg-stone-800 hover:bg-stone-700 text-rose-300 border border-rose-500/40 px-6 py-3.5 rounded-full font-bold transition flex items-center gap-2">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> اختاري الإكسسوار المناسب
-                        </button>
-                    </div>
-                </div>
-                <div class="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
-                    <div class="absolute w-full h-full rounded-full bg-rose-500/10 blur-3xl animate-pulse"></div>
-                    <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80" 
-                         alt="إكسسوارات نسائية" class="rounded-2xl shadow-2xl object-cover w-full h-full border-2 border-amber-500/30 rotate-2 transform hover:rotate-0 transition duration-500">
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content & Products Section -->
-        <main id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow w-full">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 border-b border-stone-200 pb-6">
-                <div>
-                    <h2 class="text-3xl font-bold text-stone-900" id="sectionTitle">أحدث المجموعات</h2>
-                    <p class="text-stone-500 text-sm mt-1">تصفحي أجمل القطع المتاحة حالياً لدى زينة</p>
-                </div>
-
-                <div class="flex flex-wrap gap-2 text-sm">
-                    <button onclick="filterCategory('all')" class="category-btn bg-stone-900 text-white px-4 py-2 rounded-full font-medium transition shadow-sm" data-cat="all">الكل</button>
-                    <button onclick="filterCategory('jewelry')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="jewelry">سلاسل ومجوهرات</button>
-                    <button onclick="filterCategory('rings')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="rings">أقراط وخواتم</button>
-                    <button onclick="filterCategory('watches')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="watches">ساعات أنيقة</button>
-                </div>
-            </div>
-
-            <!-- Products Grid -->
-            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                <!-- Dynamic products -->
-            </div>
-
-            <div id="noResults" class="hidden text-center py-20 bg-stone-100/50 rounded-2xl border border-dashed border-stone-300 my-8">
-                <i class="fa-solid fa-gem text-6xl text-stone-300 mb-4"></i>
-                <h3 class="text-xl font-bold text-stone-700">لم يتم العثور على قطع تطابق بحثك</h3>
-                <p class="text-stone-500 mt-1 text-sm">جربي البحث بكلمات أخرى أو اختاري فئة مختلفة</p>
-            </div>
-        </main>
-    </div>
-
-    <!-- ADMIN DASHBOARD VIEW -->
-    <div id="adminView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 bg-stone-900 text-white p-6 rounded-2xl shadow-xl">
+<!-- ===== HEADER ===== -->
+<header class="sticky top-0 z-40 glass-effect border-b border-stone-200/80 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchView('store'); filterCategory('all');">
+            <div class="w-11 h-11 rounded-full bg-stone-900 flex items-center justify-center text-amber-400 font-bold text-2xl shadow-lg ring-2 ring-amber-500/20">Z</div>
             <div>
-                <h2 class="text-2xl font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-amber-400"></i> لوحة إدارة متجر Zayna (زينة)
-                </h2>
-                <p class="text-stone-400 text-sm mt-1">إدارة المنتجات، القطع والطلبات بسهولة</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="openAddPerfumeModal()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 shadow-md">
-                    <i class="fa-solid fa-plus"></i> إضافة قطعة جديدة
-                </button>
-                <button onclick="switchView('store')" class="bg-stone-800 hover:bg-stone-700 text-stone-300 px-4 py-2.5 rounded-xl font-bold text-sm transition border border-stone-700">
-                    العودة للمتجر
-                </button>
+                <span class="text-2xl font-extrabold tracking-wider text-stone-900 block leading-none">Zayna | زينة</span>
+                <span class="text-xs text-rose-700 font-medium tracking-wide">عالم الأناقة والإكسسوارات</span>
             </div>
         </div>
 
-        <!-- Dashboard Stats -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-stone-500">إجمالي قطع الإكسسوارات</p>
-                    <h3 id="statTotalPerfumes" class="text-3xl font-extrabold text-stone-900 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-gem"></i>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-stone-500">عدد الطلبات المكتملة</p>
-                    <h3 id="statTotalOrders" class="text-3xl font-extrabold text-stone-900 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-green-50 text-green-700 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-box-archive"></i>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-stone-500">المبيعات الإجمالية</p>
-                    <h3 id="statTotalSales" class="text-3xl font-extrabold text-stone-900 mt-1">0 ر.س</h3>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-coins"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Tabs -->
-        <div class="flex border-b border-stone-200 mb-6 gap-6">
-            <button onclick="switchAdminTab('products')" id="tabBtnProducts" class="pb-3 text-sm font-bold border-b-2 border-rose-600 text-rose-800">إدارة المنتجات</button>
-            <button onclick="switchAdminTab('orders')" id="tabBtnOrders" class="pb-3 text-sm font-bold border-b-2 border-transparent text-stone-500 hover:text-stone-800">قائمة الطلبات</button>
-        </div>
-
-        <!-- Products Management Table -->
-        <div id="adminProductsTab" class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-right border-collapse">
-                    <thead>
-                        <tr class="bg-stone-100 text-stone-600 text-xs font-bold uppercase border-b border-stone-200">
-                            <th class="p-4">اسم القطعة</th>
-                            <th class="p-4">الفئة</th>
-                            <th class="p-4">السعر</th>
-                            <th class="p-4">التقييم</th>
-                            <th class="p-4 text-center">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminProductsTable" class="divide-y divide-stone-100 text-sm">
-                        <!-- Dynamic rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Orders Table -->
-        <div id="adminOrdersTab" class="hidden bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-right border-collapse">
-                    <thead>
-                        <tr class="bg-stone-100 text-stone-600 text-xs font-bold uppercase border-b border-stone-200">
-                            <th class="p-4">رقم الطلب</th>
-                            <th class="p-4">المكونات</th>
-                            <th class="p-4">المجموع</th>
-                            <th class="p-4">التاريخ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminOrdersTable" class="divide-y divide-stone-100 text-sm">
-                        <!-- Dynamic orders -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Login Password Modal -->
-    <div id="adminAuthModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative text-center">
-            <button onclick="closeAdminAuthModal()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark"></i>
+        <nav id="storeNav" class="hidden md:flex items-center space-x-8 space-x-reverse font-medium text-stone-600 text-sm lg:text-base">
+            <button onclick="switchView('store'); filterCategory('all')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">الكل</button>
+            <button onclick="switchView('store'); filterCategory('jewelry')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">مجوهرات وسلاسل</button>
+            <button onclick="switchView('store'); filterCategory('rings')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">أقراط وخواتم</button>
+            <button onclick="switchView('store'); filterCategory('watches')" class="hover:text-rose-700 transition py-1 border-b-2 border-transparent hover:border-rose-600">ساعات فاخرة</button>
+            <button onclick="openQuiz()" class="text-rose-700 font-bold hover:text-rose-900 transition flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200/60 shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> مستشار الأناقة
             </button>
-            <div class="w-12 h-12 bg-rose-100 text-rose-800 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-                <i class="fa-solid fa-lock"></i>
+        </nav>
+
+        <div class="flex items-center gap-3 sm:gap-4">
+            <button onclick="openAdminModal()" class="text-stone-600 hover:text-rose-800 text-sm font-bold bg-stone-100 hover:bg-rose-50 px-3 py-2 rounded-xl transition flex items-center gap-2 border border-stone-200">
+                <i class="fa-solid fa-user-gear text-rose-700"></i>
+                <span class="hidden sm:inline">لوحة التحكم</span>
+            </button>
+            <div id="searchBoxNav" class="relative hidden sm:block">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحثي عن قطعتك المفضلة..."
+                       class="w-48 lg:w-64 pl-9 pr-4 py-2 text-sm rounded-full bg-stone-100 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-stone-400 text-sm"></i>
             </div>
-            <h3 class="text-xl font-bold text-stone-900 mb-1">دخول مدير المتجر</h3>
-            <p class="text-xs text-stone-500 mb-4">أدخل كلمة المرور الخاصة بالمدير (الافتراضية: 1234)</p>
-            <input type="password" id="adminPasswordInput" placeholder="كلمة المرور" class="w-full px-4 py-2.5 border rounded-xl mb-4 text-center text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
-            <button onclick="verifyAdminPassword()" class="w-full bg-stone-900 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl transition text-sm">
-                تسجيل الدخول
+            <button id="cartBtnNav" onclick="toggleCart()" class="relative p-2.5 rounded-full bg-stone-100 hover:bg-rose-100 text-stone-800 transition shadow-sm">
+                <i class="fa-solid fa-bag-shopping text-lg"></i>
+                <span id="cartCount" class="absolute -top-1 -right-1 bg-rose-700 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
             </button>
         </div>
     </div>
+</header>
 
-    <!-- Add/Edit Accessory Modal -->
-    <div id="perfumeFormModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closePerfumeFormModal()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark"></i>
+<!-- ===== STORE VIEW ===== -->
+<div id="storeView" class="flex flex-col min-h-screen">
+    <section class="relative bg-stone-900 text-white py-20 px-4 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10 gap-10">
+            <div class="max-w-xl text-center md:text-right">
+                <span class="bg-rose-500/20 text-rose-300 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest inline-block mb-4 border border-rose-500/30">مجموعة زينة الحصرية</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">بريقٌ يكمّل إطلالتكِ الساحرة</h1>
+                <p class="text-stone-300 text-base sm:text-lg mb-8 leading-relaxed">اكتشفي تشكيلة مميزة من أحدث الإكسسوارات والمجوهرات المصممة بعناية لتضفي لمسة أناقة لكل مناسبة.</p>
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                    <a href="#products" class="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3.5 rounded-full font-bold transition shadow-lg shadow-rose-600/30">تسوقي الآن</a>
+                    <button onclick="openQuiz()" class="bg-stone-800 hover:bg-stone-700 text-rose-300 border border-rose-500/40 px-6 py-3.5 rounded-full font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> اختاري الإكسسوار المناسب
+                    </button>
+                </div>
+            </div>
+            <div class="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
+                <div class="absolute w-full h-full rounded-full bg-rose-500/10 blur-3xl"></div>
+                <img src="images/hero.jpg" alt="إكسسوارات نسائية"
+                     class="rounded-2xl shadow-2xl object-cover w-full h-full border-2 border-amber-500/30 rotate-2 hover:rotate-0 transition duration-500"
+                     onerror="this.src='https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80'">
+            </div>
+        </div>
+    </section>
+
+    <main id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow w-full">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4 border-b border-stone-200 pb-6">
+            <div>
+                <h2 class="text-3xl font-bold text-stone-900">أحدث المجموعات</h2>
+                <p class="text-stone-500 text-sm mt-1">تصفحي أجمل القطع المتاحة حالياً لدى زينة</p>
+            </div>
+            <div class="flex flex-wrap gap-2 text-sm">
+                <button onclick="filterCategory('all')" class="category-btn bg-stone-900 text-white px-4 py-2 rounded-full font-medium transition" data-cat="all">الكل</button>
+                <button onclick="filterCategory('jewelry')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="jewelry">سلاسل ومجوهرات</button>
+                <button onclick="filterCategory('rings')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="rings">أقراط وخواتم</button>
+                <button onclick="filterCategory('watches')" class="category-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full font-medium transition" data-cat="watches">ساعات أنيقة</button>
+            </div>
+        </div>
+
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+
+        <div id="noResults" class="hidden text-center py-20 bg-stone-100/50 rounded-2xl border border-dashed border-stone-300 my-8">
+            <i class="fa-solid fa-gem text-6xl text-stone-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-stone-700">لم يتم العثور على قطع تطابق بحثك</h3>
+            <p class="text-stone-500 mt-1 text-sm">جربي البحث بكلمات أخرى أو اختاري فئة مختلفة</p>
+        </div>
+    </main>
+</div>
+
+<!-- ===== ADMIN VIEW ===== -->
+<div id="adminView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 bg-stone-900 text-white p-6 rounded-2xl shadow-xl">
+        <div>
+            <h2 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-amber-400"></i> لوحة إدارة متجر زينة
+            </h2>
+            <p class="text-stone-400 text-sm mt-1">إدارة المنتجات، القطع والطلبات بسهولة</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openProductFormModal()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-plus"></i> إضافة قطعة جديدة
             </button>
-            <h3 id="formModalTitle" class="text-xl font-bold text-stone-900 mb-4">إضافة قطعة جديدة</h3>
-            
-            <form id="perfumeForm" onsubmit="handleSavePerfume(event)" class="space-y-4">
-                <input type="hidden" id="editPerfumeId">
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">اسم القطعة</label>
-                    <input type="text" id="formName" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1">الفئة</label>
-                        <select id="formCategory" class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
-                            <option value="jewelry">سلاسل ومجوهرات</option>
-                            <option value="rings">أقراط وخواتم</option>
-                            <option value="watches">ساعات أنيقة</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1">السعر (ر.س)</label>
-                        <input type="number" id="formPrice" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">رابط صورة المنتج (URL)</label>
-                    <input type="url" id="formImage" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="https://...">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">تفاصيل الخامة / المواد</label>
-                    <input type="text" id="formNotes" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="مطلي بالذهب 18، زركون، لؤلؤ...">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-stone-700 mb-1">الوصف</label>
-                    <textarea id="formDescription" rows="3" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-md mt-2">
-                    حفظ القطعة
-                </button>
-            </form>
+            <button onclick="switchView('store')" class="bg-stone-800 hover:bg-stone-700 text-stone-300 px-4 py-2.5 rounded-xl font-bold text-sm transition border border-stone-700">العودة للمتجر</button>
+            <button onclick="adminLogout()" class="bg-stone-800 hover:bg-red-900 text-stone-300 px-4 py-2.5 rounded-xl font-bold text-sm transition border border-stone-700">تسجيل الخروج</button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-right">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h3 class="text-white text-xl font-bold mb-3 flex items-center gap-2 justify-center md:justify-start">
-                        <span class="w-7 h-7 rounded-full bg-amber-500 text-stone-900 text-sm font-bold flex items-center justify-center">Z</span>
-                        متجر Zayna (زينة)
-                    </h3>
-                    <p class="text-sm leading-relaxed text-stone-400">وجهتك الأولى لاقتناء أجمل وأفخم الإكسسوارات والمجوهرات النسائية المتميزة بالجودة العالية والتصميم العصري.</p>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-3">روابط سريعة</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#products" onclick="switchView('store'); filterCategory('all')" class="hover:text-rose-400 transition">جميع المنتجات</a></li>
-                        <li><a href="#products" onclick="switchView('store'); filterCategory('jewelry')" class="hover:text-rose-400 transition">مجوهرات وسلاسل</a></li>
-                        <li><a href="#products" onclick="switchView('store'); filterCategory('rings')" class="hover:text-rose-400 transition">أقراط وخواتم</a></li>
-                        <li><a href="#products" onclick="switchView('store'); filterCategory('watches')" class="hover:text-rose-400 transition">الساعات النسائية</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-3">إدارة المتجر</h4>
-                    <button onclick="openAdminModal()" class="text-xs bg-stone-800 hover:bg-stone-700 text-rose-300 border border-rose-500/30 px-4 py-2 rounded-lg transition">
-                        <i class="fa-solid fa-lock text-xs ml-1"></i> دخول لوحة التحكم
-                    </button>
-                </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-stone-500">إجمالي القطع</p>
+                <h3 id="statTotalProducts" class="text-3xl font-extrabold text-stone-900 mt-1">0</h3>
             </div>
-            <div class="border-t border-stone-800 pt-6 text-xs text-center text-stone-500">
-                جميع الحقوق محفوظة &copy; 2026 متجر Zayna (زينة) للإكسسوارات النسائية.
-            </div>
+            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center text-xl"><i class="fa-solid fa-gem"></i></div>
         </div>
-    </footer>
-
-    <!-- Cart Drawer Modal -->
-    <div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
-        <div id="cartBackdrop" onclick="toggleCart()" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-        <div id="cartPanel" class="absolute left-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
-            <div class="p-6 bg-stone-900 text-white flex items-center justify-between border-b border-stone-800">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping text-rose-400"></i>
-                    <h3 class="font-bold text-lg">حقيبة التسوق</h3>
-                </div>
-                <button onclick="toggleCart()" class="text-stone-400 hover:text-white transition w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-stone-500">عدد الطلبات</p>
+                <h3 id="statTotalOrders" class="text-3xl font-extrabold text-stone-900 mt-1">0</h3>
             </div>
-            <div id="cartItems" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
-            <div class="p-6 border-t border-stone-200 bg-stone-50">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-stone-600 font-medium">المجموع الكلي:</span>
-                    <span id="cartTotal" class="text-2xl font-bold text-stone-900">0 ر.س</span>
-                </div>
-                <button onclick="checkout()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-center block">
-                    إتمام الطلب الآن
-                </button>
+            <div class="w-12 h-12 rounded-xl bg-green-50 text-green-700 flex items-center justify-center text-xl"><i class="fa-solid fa-box-archive"></i></div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-stone-500">المبيعات الإجمالية</p>
+                <h3 id="statTotalSales" class="text-3xl font-extrabold text-stone-900 mt-1">0 ر.س</h3>
             </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl"><i class="fa-solid fa-coins"></i></div>
         </div>
     </div>
 
-    <!-- Product Detail Modal -->
-    <div id="productModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition shadow-md">
-                <i class="fa-solid fa-xmark text-stone-700"></i>
-            </button>
-            <div id="modalContent" class="flex flex-col md:flex-row"></div>
-        </div>
+    <div class="flex border-b border-stone-200 mb-6 gap-6">
+        <button onclick="switchAdminTab('products')" id="tabBtnProducts" class="pb-3 text-sm font-bold border-b-2 border-rose-600 text-rose-800">إدارة المنتجات</button>
+        <button onclick="switchAdminTab('orders')" id="tabBtnOrders" class="pb-3 text-sm font-bold border-b-2 border-transparent text-stone-500 hover:text-stone-800">قائمة الطلبات</button>
     </div>
 
-    <!-- Accessory Advice Quiz Modal -->
-    <div id="quizModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
-            <button onclick="closeQuiz()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div id="quizContent">
-                <div class="text-center mb-6">
-                    <span class="text-4xl inline-block mb-1">✨</span>
-                    <h3 class="text-2xl font-bold text-stone-900">مستشار زينة للأناقة</h3>
-                    <p class="text-stone-500 text-sm mt-1">اختاري نوع الإكسسوار الفضل لنساعدك على استكشاف المجموعة المناسبة</p>
-                </div>
-                <div class="space-y-3">
-                    <p class="font-bold text-stone-800 text-sm sm:text-base">ما هي نوعية القطع التي تودين ارتدائها اليوم؟</p>
-                    <button onclick="recommendPerfume('jewelry')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
-                        <span class="font-medium text-stone-800">سلاسل ومجوهرات مطلية بالذهب للرقبة</span>
-                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
-                    </button>
-                    <button onclick="recommendPerfume('rings')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
-                        <span class="font-medium text-stone-800">أقراط برّاقة وخواتم أنيقة للأيدي</span>
-                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
-                    </button>
-                    <button onclick="recommendPerfume('watches')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
-                        <span class="font-medium text-stone-800">ساعة فاخرة ومميزة للمناسبات</span>
-                        <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // Initial Dataset
-        let perfumes = [
-            {
-                id: 1,
-                name: "قلادة القمري الذهبية - Zayna",
-                category: "jewelry",
-                price: 195,
-                rating: 4.9,
-                image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80",
-                notes: "مطلي بذهب عيار 18، أحجار الزركون النقي، ضد الصدأ",
-                description: "قلادة أنيقة بتصميم اللؤلؤ والزركون، يمنحك لمسة من الرقي والأناقة الفائقة في جميع مناسباتك."
-            },
-            {
-                id: 2,
-                name: "طقم أقراط وخاتم الفراشة البرّاقة",
-                category: "rings",
-                price: 240,
-                rating: 4.8,
-                image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=80",
-                notes: "فضة استرلينية 925، مرصعة بالزركون اللامع",
-                description: "تصميم عصري مستوحى من الطبيعة يضيف لمسة مبهجة وجذابة لكل إطلالة."
-            },
-            {
-                id: 3,
-                name: "ساعة زينة الملكية باللون الذهبي الوردي",
-                category: "watches",
-                price: 450,
-                rating: 5.0,
-                image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80",
-                notes: "مقاومة للماء، زجاج ياقوتي ضد الخدش، سير من الستيل الفاخر",
-                description: "ساعة نسائية فاخرة تجمع بين الأناقة والدقة الشديدة، التتمة المثالية لإكسسواراتك الفاخرة."
-            }
-        ];
-
-        let cart = [];
-        let orders = [];
-        let currentCategory = 'all';
-        let isAdminLoggedIn = false;
-
-        window.onload = function() {
-            renderProducts(perfumes);
-            updateAdminStats();
-        };
-
-        // Navigation View Switching
-        function switchView(view) {
-            if (view === 'admin' && !isAdminLoggedIn) {
-                openAdminAuthModal();
-                return;
-            }
-
-            if (view === 'admin') {
-                document.getElementById('storeView').classList.add('hidden');
-                document.getElementById('adminView').classList.remove('hidden');
-                document.getElementById('storeNav').classList.add('hidden');
-                document.getElementById('searchBoxNav').classList.add('hidden');
-                document.getElementById('cartBtnNav').classList.add('hidden');
-                renderAdminTables();
-            } else {
-                document.getElementById('storeView').classList.remove('hidden');
-                document.getElementById('adminView').classList.add('hidden');
-                document.getElementById('storeNav').classList.remove('hidden');
-                document.getElementById('searchBoxNav').classList.remove('hidden');
-                document.getElementById('cartBtnNav').classList.remove('hidden');
-            }
-        }
-
-        function renderProducts(items) {
-            const container = document.getElementById('productsGrid');
-            const noResults = document.getElementById('noResults');
-
-            if (items.length === 0) {
-                container.innerHTML = '';
-                noResults.classList.remove('hidden');
-                return;
-            }
-
-            noResults.classList.add('hidden');
-            container.innerHTML = items.map(perfume => `
-                <div class="bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-                    <div class="relative overflow-hidden aspect-square cursor-pointer" onclick="openProductModal(${perfume.id})">
-                        <img src="${perfume.image}" alt="${perfume.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x600/333/fff?text=Zayna'">
-                        <span class="absolute top-3 right-3 bg-stone-900/80 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
-                            ★ ${perfume.rating || '5.0'}
-                        </span>
-                    </div>
-                    <div class="p-5 flex flex-col flex-grow justify-between">
-                        <div>
-                            <h3 class="font-bold text-stone-900 text-lg mb-1 hover:text-rose-700 transition cursor-pointer" onclick="openProductModal(${perfume.id})">${perfume.name}</h3>
-                            <p class="text-xs text-stone-500 mb-3 line-clamp-1"><i class="fa-solid fa-sparkles text-amber-600 ml-1"></i>${perfume.notes}</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-3 border-t border-stone-100">
-                            <span class="text-xl font-bold text-stone-900">${perfume.price} <span class="text-xs text-stone-500 font-normal">ر.س</span></span>
-                            <button onclick="addToCart(${perfume.id})" class="bg-stone-900 hover:bg-rose-800 text-white px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 text-xs sm:text-sm font-medium shadow-md">
-                                <i class="fa-solid fa-plus"></i> إضافة
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterCategory(category) {
-            currentCategory = category;
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                if (btn.dataset.cat === category) {
-                    btn.classList.remove('bg-stone-200', 'text-stone-700');
-                    btn.classList.add('bg-stone-900', 'text-white');
-                } else {
-                    btn.classList.remove('bg-stone-900', 'text-white');
-                    btn.classList.add('bg-stone-200', 'text-stone-700');
-                }
-            });
-
-            const filtered = category === 'all' 
-                ? perfumes 
-                : perfumes.filter(p => p.category === category);
-
-            renderProducts(filtered);
-        }
-
-        function handleSearch() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = perfumes.filter(p => 
-                (currentCategory === 'all' || p.category === currentCategory) &&
-                (p.name.toLowerCase().includes(query) || p.notes.toLowerCase().includes(query))
-            );
-            renderProducts(filtered);
-        }
-
-        function addToCart(productId) {
-            const product = perfumes.find(p => p.id === productId);
-            const cartItem = cart.find(item => item.id === productId);
-
-            if (cartItem) {
-                cartItem.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-
-            updateCartUI();
-            toggleCart(true);
-        }
-
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartUI();
-        }
-
-        function changeQuantity(productId, delta) {
-            const item = cart.find(i => i.id === productId);
-            if (item) {
-                item.quantity += delta;
-                if (item.quantity <= 0) removeFromCart(productId);
-                else updateCartUI();
-            }
-        }
-
-        function updateCartUI() {
-            const cartItemsContainer = document.getElementById('cartItems');
-            const cartCount = document.getElementById('cartCount');
-            const cartTotal = document.getElementById('cartTotal');
-
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            cartCount.innerText = totalItems;
-            cartTotal.innerText = `${totalPrice} ر.س`;
-
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = `
-                    <div class="text-center py-16 text-stone-400">
-                        <i class="fa-solid fa-basket-shopping text-5xl mb-3"></i>
-                        <p class="font-medium text-stone-500">الحقيبة فارغة حالياً</p>
-                    </div>
-                `;
-                return;
-            }
-
-            cartItemsContainer.innerHTML = cart.map(item => `
-                <div class="flex items-center gap-4 bg-stone-50 p-3 rounded-xl border border-stone-200">
-                    <img src="${item.image}" class="w-16 h-16 rounded-lg object-cover" onerror="this.src='https://placehold.co/100x100/333/fff?text=Zayna'">
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-stone-900 text-sm">${item.name}</h4>
-                        <span class="text-rose-800 font-bold text-sm">${item.price} ر.س</span>
-                        <div class="flex items-center gap-2 mt-2">
-                            <button onclick="changeQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-xs font-bold transition">-</button>
-                            <span class="text-xs font-bold px-1">${item.quantity}</span>
-                            <button onclick="changeQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-stone-200 hover:bg-stone-300 flex items-center justify-center text-xs font-bold transition">+</button>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-stone-400 hover:text-red-500 p-2 transition">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function toggleCart(open = null) {
-            const drawer = document.getElementById('cartDrawer');
-            const backdrop = document.getElementById('cartBackdrop');
-            const panel = document.getElementById('cartPanel');
-            const isOpening = open !== null ? open : drawer.classList.contains('invisible');
-
-            if (isOpening) {
-                drawer.classList.remove('invisible');
-                setTimeout(() => { backdrop.classList.remove('opacity-0'); panel.classList.remove('-translate-x-full'); }, 10);
-            } else {
-                backdrop.classList.add('opacity-0');
-                panel.classList.add('-translate-x-full');
-                setTimeout(() => { drawer.classList.add('invisible'); }, 300);
-            }
-        }
-
-        function checkout() {
-            if(cart.length === 0) {
-                showToast('حقيبة التسوق فارغة! قومي بتبضع قطعكِ المفضلة أولاً.');
-                return;
-            }
-
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            orders.push({
-                id: 'ZYN-' + Math.floor(1000 + Math.random() * 9000),
-                items: [...cart],
-                total: total,
-                date: new Date().toLocaleDateString('ar-SA')
-            });
-
-            showToast('شكراً لكِ! تم استلام طلبكِ بنجاح ✨');
-            cart = [];
-            updateCartUI();
-            toggleCart(false);
-            updateAdminStats();
-        }
-
-        function showToast(msg) {
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-rose-300 px-6 py-3 rounded-full text-sm font-bold shadow-xl border border-rose-500/30 transition-all duration-300 opacity-0';
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.remove('opacity-0'), 10);
-            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 2500);
-        }
-
-        function openAdminModal() {
-            if(isAdminLoggedIn) switchView('admin');
-            else openAdminAuthModal();
-        }
-
-        function openAdminAuthModal() {
-            document.getElementById('adminAuthModal').classList.remove('hidden');
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('adminAuthModal').classList.add('hidden');
-        }
-
-        function verifyAdminPassword() {
-            const pass = document.getElementById('adminPasswordInput').value;
-            if (pass === '1234') {
-                isAdminLoggedIn = true;
-                closeAdminAuthModal();
-                switchView('admin');
-                showToast('تم تسجيل الدخول بنجاح كمدير لمتجر زينة');
-            } else {
-                showToast('كلمة المرور غير صحيحة!');
-            }
-        }
-
-        function updateAdminStats() {
-            document.getElementById('statTotalPerfumes').innerText = perfumes.length;
-            document.getElementById('statTotalOrders').innerText = orders.length;
-            const sales = orders.reduce((sum, o) => sum + o.total, 0);
-            document.getElementById('statTotalSales').innerText = `${sales} ر.س`;
-        }
-
-        function switchAdminTab(tab) {
-            if(tab === 'products') {
-                document.getElementById('adminProductsTab').classList.remove('hidden');
-                document.getElementById('adminOrdersTab').classList.add('hidden');
-                document.getElementById('tabBtnProducts').className = 'pb-3 text-sm font-bold border-b-2 border-rose-600 text-rose-800';
-                document.getElementById('tabBtnOrders').className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-stone-500 hover:text-stone-800';
-            } else {
-                document.getElementById('adminProductsTab').classList.add('hidden');
-                document.getElementById('adminOrdersTab').classList.remove('hidden');
-                document.getElementById('tabBtnOrders').className = 'pb-3 text-sm font-bold border-b-2 border-rose-600 text-rose-800';
-                document.getElementById('tabBtnProducts').className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-stone-500 hover:text-stone-800';
-            }
-        }
-
-        function renderAdminTables() {
-            const pTable = document.getElementById('adminProductsTable');
-            pTable.innerHTML = perfumes.map(p => `
-                <tr class="hover:bg-stone-50 transition">
-                    <td class="p-4 font-bold flex items-center gap-3">
-                        <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover" onerror="this.src='https://placehold.co/50x50/333/fff?text=Zayna'">
-                        ${p.name}
-                    </td>
-                    <td class="p-4 text-stone-600">${p.category === 'jewelry' ? 'سلاسل ومجوهرات' : p.category === 'rings' ? 'أقراط وخواتم' : 'ساعات أنيقة'}</td>
-                    <td class="p-4 font-bold text-stone-900">${p.price} ر.س</td>
-                    <td class="p-4 text-amber-700 font-bold">★ ${p.rating || '5.0'}</td>
-                    <td class="p-4 text-center">
-                        <button onclick="editPerfume(${p.id})" class="text-blue-600 hover:text-blue-800 px-2 py-1"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deletePerfume(${p.id})" class="text-red-600 hover:text-red-800 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
-                    </td>
+    <div id="adminProductsTab" class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-right border-collapse">
+                <thead>
+                <tr class="bg-stone-100 text-stone-600 text-xs font-bold uppercase border-b border-stone-200">
+                    <th class="p-4">اسم القطعة</th>
+                    <th class="p-4">الفئة</th>
+                    <th class="p-4">السعر</th>
+                    <th class="p-4">التقييم</th>
+                    <th class="p-4 text-center">الإجراءات</th>
                 </tr>
-            `).join('');
+                </thead>
+                <tbody id="adminProductsTable" class="divide-y divide-stone-100 text-sm"></tbody>
+            </table>
+        </div>
+    </div>
 
-            const oTable = document.getElementById('adminOrdersTable');
-            if(orders.length === 0) {
-                oTable.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-stone-400">لا توجد طلبات واردة بعد</td></tr>`;
-            } else {
-                oTable.innerHTML = orders.map(o => `
-                    <tr class="hover:bg-stone-50 transition">
-                        <td class="p-4 font-bold text-rose-800">${o.id}</td>
-                        <td class="p-4 text-stone-600 text-xs">${o.items.map(i => `${i.name} (${i.quantity})`).join(', ')}</td>
-                        <td class="p-4 font-bold text-stone-900">${o.total} ر.س</td>
-                        <td class="p-4 text-stone-500 text-xs">${o.date}</td>
-                    </tr>
-                `).join('');
-            }
-        }
+    <div id="adminOrdersTab" class="hidden bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-right border-collapse">
+                <thead>
+                <tr class="bg-stone-100 text-stone-600 text-xs font-bold uppercase border-b border-stone-200">
+                    <th class="p-4">رقم الطلب</th>
+                    <th class="p-4">المكونات</th>
+                    <th class="p-4">المجموع</th>
+                    <th class="p-4">التاريخ</th>
+                </tr>
+                </thead>
+                <tbody id="adminOrdersTable" class="divide-y divide-stone-100 text-sm"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-        function openAddPerfumeModal() {
-            document.getElementById('perfumeForm').reset();
-            document.getElementById('editPerfumeId').value = '';
-            document.getElementById('formModalTitle').innerText = 'إضافة قطعة جديدة';
-            document.getElementById('perfumeFormModal').classList.remove('hidden');
-        }
+<!-- ===== ADMIN AUTH MODAL ===== -->
+<div id="adminAuthModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm flex">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative text-center">
+        <button onclick="closeAdminAuthModal()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark"></i></button>
+        <div class="w-12 h-12 bg-rose-100 text-rose-800 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-lock"></i></div>
+        <h3 class="text-xl font-bold text-stone-900 mb-1">دخول مدير المتجر</h3>
+        <p class="text-xs text-stone-500 mb-4">سجّلي الدخول بحساب المدير</p>
+        <input type="email" id="adminEmailInput" placeholder="البريد الإلكتروني" autocomplete="username" dir="ltr"
+               class="w-full px-4 py-2.5 border rounded-xl mb-3 text-center text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
+        <input type="password" id="adminPasswordInput" placeholder="كلمة المرور" autocomplete="current-password" dir="ltr" onkeydown="if(event.key==='Enter')adminLogin()"
+               class="w-full px-4 py-2.5 border rounded-xl mb-4 text-center text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
+        <button onclick="adminLogin()" class="w-full bg-stone-900 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl transition text-sm">تسجيل الدخول</button>
+    </div>
+</div>
 
-        function closePerfumeFormModal() {
-            document.getElementById('perfumeFormModal').classList.add('hidden');
-        }
-
-        function handleSavePerfume(e) {
-            e.preventDefault();
-            const id = document.getElementById('editPerfumeId').value;
-            const perfumeData = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('formName').value,
-                category: document.getElementById('formCategory').value,
-                price: parseFloat(document.getElementById('formPrice').value),
-                rating: 5.0,
-                image: document.getElementById('formImage').value,
-                notes: document.getElementById('formNotes').value,
-                description: document.getElementById('formDescription').value,
-            };
-
-            if(id) {
-                perfumes = perfumes.map(p => p.id === parseInt(id) ? perfumeData : p);
-                showToast('تم تعديل بيانات القطعة بنجاح');
-            } else {
-                perfumes.push(perfumeData);
-                showToast('تمت إضافة القطعة الجديدة بنجاح');
-            }
-
-            closePerfumeFormModal();
-            renderProducts(perfumes);
-            renderAdminTables();
-            updateAdminStats();
-        }
-
-        function editPerfume(id) {
-            const p = perfumes.find(item => item.id === id);
-            if(!p) return;
-            document.getElementById('editPerfumeId').value = p.id;
-            document.getElementById('formName').value = p.name;
-            document.getElementById('formCategory').value = p.category;
-            document.getElementById('formPrice').value = p.price;
-            document.getElementById('formImage').value = p.image;
-            document.getElementById('formNotes').value = p.notes;
-            document.getElementById('formDescription').value = p.description;
-            document.getElementById('formModalTitle').innerText = 'تعديل القطعة';
-            document.getElementById('perfumeFormModal').classList.remove('hidden');
-        }
-
-        function deletePerfume(id) {
-            perfumes = perfumes.filter(p => p.id !== id);
-            renderProducts(perfumes);
-            renderAdminTables();
-            updateAdminStats();
-            showToast('تم حذف القطعة');
-        }
-
-        function openProductModal(productId) {
-            const product = perfumes.find(p => p.id === productId);
-            const content = document.getElementById('modalContent');
-
-            content.innerHTML = `
-                <div class="w-full md:w-1/2 h-64 md:h-auto relative">
-                    <img src="${product.image}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x600/333/fff?text=Zayna'">
+<!-- ===== PRODUCT FORM MODAL ===== -->
+<div id="productFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm flex">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeProductFormModal()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark"></i></button>
+        <h3 id="formModalTitle" class="text-xl font-bold text-stone-900 mb-4">إضافة قطعة جديدة</h3>
+        <form id="productForm" onsubmit="handleSaveProduct(event)" class="space-y-4">
+            <input type="hidden" id="editProductId">
+            <div>
+                <label class="block text-xs font-bold text-stone-700 mb-1">اسم القطعة</label>
+                <input type="text" id="formName" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">الفئة</label>
+                    <select id="formCategory" class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                        <option value="jewelry">سلاسل ومجوهرات</option>
+                        <option value="rings">أقراط وخواتم</option>
+                        <option value="watches">ساعات أنيقة</option>
+                    </select>
                 </div>
-                <div class="w-full md:w-1/2 p-6 flex flex-col justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full uppercase border border-rose-200/60 inline-block mb-2">إكسسوار فاخر</span>
-                        <h3 class="text-2xl font-bold text-stone-900">${product.name}</h3>
-                        <p class="text-rose-800 font-bold text-2xl mt-2">${product.price} <span class="text-sm text-stone-500 font-normal">ر.س</span></p>
-                        <p class="text-stone-600 text-sm mt-4 leading-relaxed">${product.description}</p>
-                        <div class="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-100">
-                            <span class="text-xs font-bold text-stone-700 block mb-1">تفاصيل الخامة والمواد:</span>
-                            <span class="text-xs text-stone-500 leading-normal">${product.notes}</span>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <button onclick="addToCart(${product.id}); closeProductModal();" class="w-full bg-stone-900 hover:bg-rose-800 text-white font-bold py-3.5 rounded-xl transition shadow-lg">
-                            إضافة إلى الحقيبة
-                        </button>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">السعر (ر.س)</label>
+                    <input type="number" id="formPrice" required min="0" step="0.01" class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                </div>
+            </div>
+                       <div>
+                <label class="block text-xs font-bold text-stone-700 mb-1">صورة القطعة</label>
+                <div class="flex items-center gap-3">
+                    <img id="formImagePreview" src="images/placeholder.svg" alt="" class="w-20 h-20 rounded-xl object-cover border border-stone-200 bg-stone-50">
+                    <div class="flex-1">
+                        <input type="file" id="formImageFile" accept="image/*" onchange="handleImageFile(this)"
+                               class="block w-full text-xs text-stone-600 file:ml-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-rose-50 file:text-rose-700 file:font-bold hover:file:bg-rose-100">
+                        <p class="text-[11px] text-stone-400 mt-1">اختاري صورة من جهازك، وتُصغَّر تلقائيًا</p>
                     </div>
                 </div>
-            `;
-            document.getElementById('productModal').classList.remove('hidden');
-        }
+                <input type="hidden" id="formImage">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-stone-700 mb-1">تفاصيل الخامة / المواد</label>
+                <input type="text" id="formNotes" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none" placeholder="مطلي بالذهب 18، زركون، لؤلؤ...">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-stone-700 mb-1">الوصف</label>
+                <textarea id="formDescription" rows="3" required class="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition text-sm shadow-md mt-2">حفظ القطعة</button>
+        </form>
+    </div>
+</div>
 
-        function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
-        function openQuiz() { document.getElementById('quizModal').classList.remove('hidden'); }
-        function closeQuiz() { document.getElementById('quizModal').classList.add('hidden'); }
-        function recommendPerfume(cat) {
-            closeQuiz();
-            switchView('store');
-            filterCategory(cat);
-            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+<!-- ===== FOOTER ===== -->
+<footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-right">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+                <h3 class="text-white text-xl font-bold mb-3 flex items-center gap-2 justify-center md:justify-start">
+                    <span class="w-7 h-7 rounded-full bg-amber-500 text-stone-900 text-sm font-bold flex items-center justify-center">Z</span>
+                    متجر زينة
+                </h3>
+                <p class="text-sm leading-relaxed">وجهتك الأولى لاقتناء أجمل الإكسسوارات والمجوهرات النسائية بالجودة العالية والتصميم العصري.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3">روابط سريعة</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#products" onclick="switchView('store'); filterCategory('all')" class="hover:text-rose-400 transition">جميع المنتجات</a></li>
+                    <li><a href="#products" onclick="switchView('store'); filterCategory('jewelry')" class="hover:text-rose-400 transition">مجوهرات وسلاسل</a></li>
+                    <li><a href="#products" onclick="switchView('store'); filterCategory('rings')" class="hover:text-rose-400 transition">أقراط وخواتم</a></li>
+                    <li><a href="#products" onclick="switchView('store'); filterCategory('watches')" class="hover:text-rose-400 transition">الساعات النسائية</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3">تواصلي معنا</h4>
+                <a id="whatsappFooterLink" href="#" target="_blank" class="text-xs bg-green-700 hover:bg-green-600 text-white border border-green-500/30 px-4 py-2 rounded-lg transition inline-flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i> واتساب المتجر
+                </a>
+            </div>
+        </div>
+        <div class="border-t border-stone-800 pt-6 text-xs text-center">جميع الحقوق محفوظة &copy; 2026 متجر زينة للإكسسوارات النسائية.</div>
+    </div>
+</footer>
+
+<!-- ===== CART DRAWER ===== -->
+<div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
+    <div id="cartBackdrop" onclick="toggleCart()" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+    <div id="cartPanel" class="absolute left-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 bg-stone-900 text-white flex items-center justify-between border-b border-stone-800">
+            <div class="flex items-center gap-2"><i class="fa-solid fa-bag-shopping text-rose-400"></i><h3 class="font-bold text-lg">حقيبة التسوق</h3></div>
+            <button onclick="toggleCart()" class="text-stone-400 hover:text-white transition w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div id="cartItems" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-6 border-t border-stone-200 bg-stone-50">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-stone-600 font-medium">المجموع الكلي:</span>
+                <span id="cartTotal" class="text-2xl font-bold text-stone-900">0 ر.س</span>
+            </div>
+            <button onclick="checkoutViaWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-brands fa-whatsapp text-xl"></i> إتمام الطلب عبر واتساب
+            </button>
+            <p class="text-[11px] text-stone-500 text-center mt-2">سيتم فتح واتساب برسالة تحتوي تفاصيل طلبك — أرسليها لإتمام الطلب</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PRODUCT DETAIL MODAL ===== -->
+<div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm flex">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+        <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition shadow-md"><i class="fa-solid fa-xmark text-stone-700"></i></button>
+        <div id="modalContent" class="flex flex-col md:flex-row"></div>
+    </div>
+</div>
+
+<!-- ===== QUIZ MODAL ===== -->
+<div id="quizModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm flex">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+        <button onclick="closeQuiz()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600"><i class="fa-solid fa-xmark"></i></button>
+        <div class="text-center mb-6">
+            <span class="text-4xl inline-block mb-1">✨</span>
+            <h3 class="text-2xl font-bold text-stone-900">مستشار زينة للأناقة</h3>
+            <p class="text-stone-500 text-sm mt-1">اختاري نوع الإكسسوار المفضل لنساعدك على استكشاف المجموعة المناسبة</p>
+        </div>
+        <div class="space-y-3">
+            <p class="font-bold text-stone-800 text-sm sm:text-base">ما نوعية القطع التي تودين ارتدائها اليوم؟</p>
+            <button onclick="recommendProduct('jewelry')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
+                <span class="font-medium text-stone-800">سلاسل ومجوهرات مطلية بالذهب للرقبة</span>
+                <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
+            </button>
+            <button onclick="recommendProduct('rings')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
+                <span class="font-medium text-stone-800">أقراط برّاقة وخواتم أنيقة للأيدي</span>
+                <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
+            </button>
+            <button onclick="recommendProduct('watches')" class="w-full text-right p-4 rounded-xl border border-stone-200 hover:border-rose-500 hover:bg-rose-50/50 transition flex items-center justify-between group">
+                <span class="font-medium text-stone-800">ساعة فاخرة ومميزة للمناسبات</span>
+                <i class="fa-solid fa-angle-left text-stone-400 group-hover:text-rose-600 transition"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== JS ===== -->
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
