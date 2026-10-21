@@ -424,7 +424,7 @@ function initSiteUI() {
     }
     if (!$('socialLinks')) $('whatsappFooterLink')?.insertAdjacentHTML('afterend', '<div id="socialLinks" class="flex flex-wrap gap-2 mt-3 justify-center md:justify-start"></div>');
     if (!$('siteName')) document.querySelector('header span.text-2xl.font-extrabold')?.setAttribute('id', 'siteName');
-    if (!$('bannerSection')) $('products')?.insertAdjacentHTML('beforebegin', '<section id="bannerSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 w-full"></section>');
+    if (!$('bannerSection')) $('products')?.insertAdjacentHTML('beforebegin', '<section id="bannerSection" class="hidden w-full m-0 p-0"></section>');
 }
 
 // عرض الإعدادات في المتجر
@@ -441,8 +441,8 @@ function renderSite(c = {}) {
     const list = Array.isArray(c.banners) ? c.banners : [];
     clearInterval(bannerTimer);
     sec.classList.toggle('hidden', !list.length);
-    sec.innerHTML = list.length ? `<div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[16/7] bg-stone-100">${list.map((b, i) =>
-        `<img src="${img(b)}" alt="" class="banner-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i ? 'opacity-0' : ''}">`).join('')}</div>` : '';
+    sec.innerHTML = list.length ? `<div class="relative w-full overflow-hidden shadow-lg bg-stone-100 aspect-[16/7] min-h-[220px] sm:min-h-[300px] lg:min-h-[420px]">${list.map((b, i) =>
+        `<img src="${img(b)}" alt="بنر متجر زينة" class="banner-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i ? 'opacity-0' : ''}">`).join('')}</div>` : '';
     if (list.length > 1) {
         const slides = sec.querySelectorAll('.banner-slide'); let n = 0;
         bannerTimer = setInterval(() => { slides[n].classList.add('opacity-0'); n = (n + 1) % slides.length; slides[n].classList.remove('opacity-0'); }, 4500);
