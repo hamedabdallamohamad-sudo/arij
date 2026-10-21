@@ -1,6 +1,6 @@
 // طبقة البيانات: كل التعامل مع Firebase هنا فقط
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot,
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, updateDoc, onSnapshot,
          query, orderBy, serverTimestamp, writeBatch }
     from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
@@ -27,3 +27,7 @@ export const seedProducts  = list => {
 export const login  = (email, pass) => signInWithEmailAndPassword(auth, email, pass);
 export const logout = () => signOut(auth);
 export const onAuth = cb => onAuthStateChanged(auth, cb);
+
+export const updateOrder   = (id, data) => updateDoc(doc(db, 'orders', id), data);
+export const watchSettings = (ok, err) => onSnapshot(doc(db, 'settings', 'site'), s => ok(s.exists() ? s.data() : {}), err);
+export const saveSettings  = data => setDoc(doc(db, 'settings', 'site'), data, { merge: true });
