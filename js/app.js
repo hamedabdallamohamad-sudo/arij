@@ -16,14 +16,16 @@ const img = u => {
 const MAX_IMAGES = 4;
 let formImages = [];
 const galleryOf = p => (Array.isArray(p.images) && p.images.length ? p.images : [p.image]).filter(Boolean);
-const money = n => `${Number(n || 0).toLocaleString('en-US')} ${CURRENCY}`;
+const fmt = n => Number(n || 0).toLocaleString('en-US');   // 12000 ← 12,000
+const money = n => `${fmt(n)} ${CURRENCY}`;
 const ONERR = "this.onerror=null;this.src='images/placeholder.svg'";
-const show = id => $(id).classList.remove('hidden');
-const hide = id => $(id).classList.add('hidden');
+const show = id => $(id)?.classList.remove('hidden');
+const hide = id => $(id)?.classList.add('hidden');
+const ADMIN_PAGE = document.body.dataset.page === 'admin';   // admin.html = لوحة التحكم، وغيره = المتجر
 
 function toast(msg, error = false) {
     const t = document.createElement('div');
-    t.className = `fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-full text-sm font-bold shadow-xl transition-opacity duration-300 opacity-0 ${error ? 'bg-red-700 text-white' : 'bg-stone-900 text-amber-300'}`;
+    t.className = `fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-full text-sm font-bold shadow-xl transition-opacity duration-300 opacity-0 ${error ? 'bg-red-700 text-white' : 'bg-stone-900 text-amber-300'}`;
     t.textContent = msg;
     document.body.append(t);
     requestAnimationFrame(() => t.classList.remove('opacity-0'));
@@ -40,6 +42,7 @@ const saveCart = () => { try { localStorage.setItem(CART_KEY, JSON.stringify(sta
 const card = p => `
 <div class="bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
   <div class="relative overflow-hidden aspect-square cursor-pointer" onclick="openProductModal('${esc(p.id)}')">
+    <button onclick="event.stopPropagation(); shareProduct('${esc(p.id)}')" title="مشاركة عبر واتساب" class="absolute top-3 left-3 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-green-600 hover:text-white text-green-600 shadow flex items-center justify-center transition"><i class="fa-brands fa-whatsapp"></i></button>
     <img src="${img(p.image)}" alt="${esc(p.name)}" loading="lazy" onerror="${ONERR}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
     ${p.rating ? `<span class="absolute top-3 right-3 bg-stone-900/80 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-full">★ ${esc(p.rating)}</span>` : ''}
   </div>
@@ -49,13 +52,14 @@ const card = p => `
       <p class="text-xs text-stone-500 mb-3 line-clamp-1"><i class="fa-solid fa-gem text-rose-600 ml-1"></i>${esc(p.notes)}</p>
     </div>
     <div class="flex items-center justify-between pt-3 border-t border-stone-100">
-      <span class="text-xl font-bold text-stone-900">${esc(p.price)} <span class="text-xs text-stone-500 font-normal">${CURRENCY}</span></span>
+      <span class="text-xl font-bold text-stone-900">${fmt(p.price)} <span class="text-xs text-stone-500 font-normal">${CURRENCY}</span></span>
       <button onclick="addToCart('${esc(p.id)}')" class="bg-stone-900 hover:bg-rose-700 text-white px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 text-sm font-medium shadow-md"><i class="fa-solid fa-plus"></i> إضافة</button>
     </div>
   </div>
 </div>`;
 
 function renderStore() {
+    if (!$('productsGrid')) return;
     const q = state.query.trim().toLowerCase();
     const list = state.products.filter(p =>
         (state.category === 'all' || p.category === state.category) &&
@@ -92,7 +96,7 @@ function openProductModal(id) {
       <div>
         <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200/60 inline-block mb-2">${esc(CATEGORIES[p.category] || 'إكسسوار')}</span>
         <h3 class="text-2xl font-bold text-stone-900">${esc(p.name)}</h3>
-        <p class="text-rose-800 font-bold text-2xl mt-2">${esc(p.price)} <span class="text-sm text-stone-500 font-normal">${CURRENCY}</span></p>
+        <p class="text-rose-800 font-bold text-2xl mt-2">${fmt(p.price)} <span class="text-sm text-stone-500 font-normal">${CURRENCY}</span></p>
         <p class="text-stone-600 text-sm mt-4 leading-relaxed">${esc(p.description)}</p>
         <div class="mt-4 p-3 bg-stone-50 rounded-xl border border-stone-100">
           <span class="text-xs font-bold text-stone-700 block mb-1">الخامة والمواد:</span>
@@ -100,9 +104,27 @@ function openProductModal(id) {
         </div>
         ${rows ? `<div class="mt-3">${rows}</div>` : ''}
       </div>
-      <button onclick="addToCart('${esc(p.id)}'); closeProductModal();" class="mt-6 w-full bg-stone-900 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg">إضافة إلى الحقيبة</button>
+      <div class="mt-6 space-y-2">
+        <button onclick="addToCart('${esc(p.id)}'); closeProductModal();" class="w-full bg-stone-900 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg">إضافة إلى الحقيبة</button>
+        <div class="flex gap-2">
+          <button onclick="shareProduct('${esc(p.id)}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-lg"></i> مشاركة عبر واتساب</button>
+          <button onclick="copyProductLink('${esc(p.id)}')" title="نسخ الرابط" class="px-4 border border-stone-300 hover:bg-stone-100 rounded-xl text-stone-600 transition"><i class="fa-regular fa-copy"></i></button>
+        </div>
+      </div>
     </div>`;
     show('productModal');
+}
+// رابط مباشر للمنتج: يفتح نافذته تلقائياً عند الدخول
+const productUrl = id => `${location.origin}${location.pathname}?p=${encodeURIComponent(id)}`;
+function shareProduct(id) {
+    const p = state.products.find(x => x.id === id); if (!p) return;
+    const text = `✨ ${p.name}\nالسعر: ${money(p.price)}\nمن ${state.settings?.storeName || 'زينة'}\n${productUrl(id)}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+async function copyProductLink(id) {
+    const url = productUrl(id);
+    try { await navigator.clipboard.writeText(url); toast('تم نسخ رابط المنتج ✓'); }
+    catch { window.prompt('انسخي رابط المنتج:', url); }
 }
 const closeProductModal = () => hide('productModal');
 const openQuiz = () => show('quizModal');
@@ -115,7 +137,10 @@ const cartItems = () => state.cart.map(c => { const p = state.products.find(x =>
 function addToCart(id) {
     const c = state.cart.find(x => x.id === id);
     c ? c.qty++ : state.cart.push({ id, qty: 1 });
-    renderCart(); toggleCart(true);
+    renderCart();
+    const p = state.products.find(x => x.id === id);
+    toast(`تمت إضافة «${p?.name || 'القطعة'}» إلى الحقيبة ✓`);
+    $('cartCount')?.animate?.([{ transform: 'scale(1)' }, { transform: 'scale(1.6)' }, { transform: 'scale(1)' }], { duration: 350 });
 }
 function changeQuantity(id, d) {
     const c = state.cart.find(x => x.id === id); if (!c) return;
@@ -126,10 +151,16 @@ function changeQuantity(id, d) {
 function removeFromCart(id) { state.cart = state.cart.filter(x => x.id !== id); renderCart(); }
 
 function renderCart() {
+    if (!$('cartItems')) return;
     saveCart();
     const items = cartItems();
     $('cartCount').textContent = items.reduce((s, i) => s + i.qty, 0);
     $('cartTotal').textContent = money(items.reduce((s, i) => s + i.price * i.qty, 0));
+    if ($('cartBar')) {
+        const n = items.reduce((s, i) => s + i.qty, 0);
+        $('cartBar').classList.toggle('hidden', !n);
+        $('cartBarInfo').textContent = `${n} قطعة — ${money(items.reduce((s, i) => s + i.price * i.qty, 0))}`;
+    }
     $('cartItems').innerHTML = items.length ? items.map(i => `
     <div class="flex items-center gap-4 bg-stone-50 p-3 rounded-xl border border-stone-200">
       <img src="${img(i.image)}" alt="${esc(i.name)}" onerror="${ONERR}" class="w-16 h-16 rounded-lg object-cover">
@@ -200,6 +231,19 @@ function confirmOrder(e) {
     toast('تم تجهيز طلبك — أرسليه من واتساب لإتمامه ✨');
 }
 
+// شريط عائم يظهر عند وجود قطع في الحقيبة: عرض السلة أو إتمام الطلب متى انتهى الزائر من التسوق
+function initCartBar() {
+    document.body.insertAdjacentHTML('beforeend', `
+    <div id="cartBar" class="hidden fixed bottom-4 inset-x-4 z-40 max-w-xl mx-auto bg-stone-900 text-white rounded-2xl shadow-2xl px-4 py-3 flex items-center justify-between gap-3 border border-amber-400/30">
+      <div class="flex items-center gap-3 min-w-0"><i class="fa-solid fa-bag-shopping text-amber-400 text-lg"></i>
+        <div class="min-w-0"><div class="text-[11px] text-stone-400">حقيبتك</div><div id="cartBarInfo" class="text-sm font-bold truncate"></div></div></div>
+      <div class="flex gap-2 shrink-0">
+        <button onclick="toggleCart(true)" class="px-3.5 py-2 rounded-xl border border-stone-600 hover:bg-stone-800 text-xs font-bold transition">عرض السلة</button>
+        <button onclick="checkoutViaWhatsApp()" class="px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-600 text-xs font-bold transition">إتمام الطلب</button>
+      </div>
+    </div>`);
+}
+
 function initCheckoutUI() {
     const inp = 'w-full px-3 py-2 border border-stone-300 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none';
     const f = (id, label, attrs = '') => `<div><label class="block text-xs font-bold text-stone-700 mb-1">${label}</label><input id="${id}" ${attrs} class="${inp}"></div>`;
@@ -228,8 +272,8 @@ function initCheckoutUI() {
 /* ---------- الإدارة ---------- */
 function switchView(v) {
     if (v === 'admin' && !state.isAdmin) return openAdminModal();
-    $('storeView').classList.toggle('hidden', v === 'admin');
-    $('adminView').classList.toggle('hidden', v !== 'admin');
+    $('storeView')?.classList.toggle('hidden', v === 'admin');
+    $('adminView')?.classList.toggle('hidden', v !== 'admin');
     window.scrollTo(0, 0);
 }
 function openAdminModal() { state.isAdmin ? switchView('admin') : show('adminAuthModal'); }
@@ -259,6 +303,7 @@ function switchAdminTab(tab) {
 }
 
 function renderAdmin() {
+    if (!ADMIN_PAGE) return;
     $('statTotalProducts').textContent = state.products.length;
     $('statTotalOrders').textContent = state.orders.length;
     $('statTotalSales').textContent = money(state.orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + (o.total || 0), 0));
@@ -328,7 +373,6 @@ function initFormUI() {
     extra.innerHTML = [['formColor', 'اللون', 'ذهبي، فضي...'], ['formSize', 'المقاس / الأبعاد', 'طول السلسلة 45 سم'], ['formCare', 'العناية', 'تجنّبي الماء والعطور']]
         .map(([id, l, ph]) => `<div><label class="block text-xs font-bold text-stone-700 mb-1">${l} <span class="font-normal text-stone-400">(اختياري)</span></label><input type="text" id="${id}" placeholder="${ph}" class="${inp}"></div>`).join('');
     $('formDescription').parentElement.after(extra);
-    $('productModal').firstElementChild.classList.add('max-h-[90vh]', 'overflow-y-auto');
 }
 
 function openProductFormModal(p = null) {
@@ -626,18 +670,25 @@ async function setStatus(id, status) {
 /* ---------- التشغيل ---------- */
 document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    ['productModal', 'quizModal', 'adminAuthModal', 'productFormModal', 'checkoutModal'].forEach(hide);
-    if (!$('cartDrawer').classList.contains('invisible')) toggleCart(false);
+    (ADMIN_PAGE ? ['productFormModal'] : ['productModal', 'quizModal', 'checkoutModal']).forEach(hide);
+    if ($('cartDrawer') && !$('cartDrawer').classList.contains('invisible')) toggleCart(false);
 });
 
 db.watchProducts(list => {
     state.products = list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     state.loaded = true; renderStore(); renderCart(); renderAdmin();
+    if (!state.deepLinked && !ADMIN_PAGE && state.products.length) {
+        state.deepLinked = true;
+        const pid = new URLSearchParams(location.search).get('p');
+        if (pid && state.products.some(x => x.id === pid)) openProductModal(pid);
+    }
 }, () => { state.loaded = true; renderStore(); toast('تعذّر تحميل المنتجات — راجعي إعدادات Firebase', true); });
 
 db.watchSettings(c => { state.settings = c; renderSite(c); if (!setDirty) fillSettings(); }, () => {});
 
 db.onAuth(user => {
+    if (!ADMIN_PAGE) return;   // المتجر لا يتعامل مع الدخول إطلاقاً
+    if (user) { hide('adminAuthModal'); show('adminView'); } else { hide('adminView'); show('adminAuthModal'); }
     state.isAdmin = !!user;
     state.stopOrders?.(); state.stopOrders = null;
     if (user) state.stopOrders = db.watchOrders(o => {
@@ -649,7 +700,14 @@ db.onAuth(user => {
 
 const wa = $('whatsappFooterLink');
 if (wa) wa.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-initFormUI(); initCheckoutUI(); initSiteUI(); initOrdersUI(); initSettingsUI();
+if (ADMIN_PAGE) { initFormUI(); initOrdersUI(); initSettingsUI(); }
+else {
+    // المتجر للزبائن فقط: نزيل أي أثر للوحة التحكم من الصفحة
+    ['adminView', 'adminAuthModal', 'productFormModal'].forEach(id => $(id)?.remove());
+    document.querySelectorAll('[onclick*="openAdminModal"]').forEach(e => e.remove());
+    initCheckoutUI(); initSiteUI(); initCartBar();
+    $('productModal')?.firstElementChild?.classList.add('max-h-[90vh]', 'overflow-y-auto');   // نافذة المنتج قابلة للتمرير على الجوال
+}
 filterCategory('all'); renderCart();
 
 // index.html يستدعي الدوال عبر onclick، فنعرضها عالمياً
@@ -657,4 +715,4 @@ Object.assign(window, { switchView, filterCategory, handleSearch, openProductMod
     recommendProduct, addToCart, changeQuantity, removeFromCart, toggleCart, checkoutViaWhatsApp, openAdminModal,
     closeAdminAuthModal, adminLogin, adminLogout, switchAdminTab, openProductFormModal, closeProductFormModal,
     editProduct, handleSaveProduct, deleteProduct, seedDemo, handleImageFile, makeMainImage, removeFormImage, confirmOrder, closeCheckout,
-    markDirty, handleLogo, handleBanners, removeLogo, removeBanner, saveSettings, setStatus, setOrderFilter, printInvoice });
+    shareProduct, copyProductLink, markDirty, handleLogo, handleBanners, removeLogo, removeBanner, saveSettings, setStatus, setOrderFilter, printInvoice });
